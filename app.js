@@ -1,10 +1,33 @@
 // create constants for the form and the form controls
 const newSessionFormEl = document.getElementsByTagName("form")[0];
+
 const dateInputEl = document.getElementById("date");
 const startTimeInputEl = document.getElementById("start-time");
 const endTimeInputEl = document.getElementById("end-time"); 
+
+const startSuburbInputEl = document.getElementById("start-suburb")
+const endSuburbInputEl = document.getElementById("end-suburb")
+
 const STORAGE_KEY = "learner-hours";
 const pastSessionContainer = document.getElementById("past-sessions");
+
+let allSuburbs = []
+const suburbsEl = document.getElementById("suburbs");
+
+// Create autocomplete options for location input
+fetch('NSW_suburbs.json')
+    .then(response => response.json())
+    .then(data => {
+        allSuburbs = data.map(item => `${item.suburb} ${item.postcode}`)
+
+        // Create datalist elements for each suburb in the JSON file
+        allSuburbs.forEach(element => {
+            const option = document.createElement("option");
+            option.value = element;
+            suburbsEl.appendChild(option);
+        });
+    });
+
 
 // Listen to form submissions.
 newSessionFormEl.addEventListener("submit", (event) => {
@@ -18,21 +41,29 @@ newSessionFormEl.addEventListener("submit", (event) => {
     const date = dateInputEl.value;
     const startTime = startTimeInputEl.value;
     const endTime = endTimeInputEl.value;
+    const startSuburb = startSuburbInputEl.value;
+    const endSuburb = endSuburbInputEl.value;
 
     // Check if the date is invalid
     if (checkDateInvalid(date)) {
-    // If the date is invalid, exit.
-    return;
+        // If the date is invalid, exit.
+        return;
     }
 
     // Check if the times are invalid
     if (checkTimesInvalid(startTime, endTime)) {
-    // If the times are invalid, exit.
-    return;
+        // If the times are invalid, exit.
+        return;
+    }
+
+    // Check if the start and end suburbs are invalid
+    if (checkSuburbsInvalid(startSuburb, endSuburb)) {
+        // If the suburbs are invalid, exit.
+        return;
     }
 
     // Store the new session in our client-side storage.
-    storeNewSession(date, startTime, endTime);
+    storeNewSession(date, startTime, endTime, startSuburb, endSuburb);
 
     // Refresh the UI.
     renderPastSessions();
@@ -41,7 +72,9 @@ newSessionFormEl.addEventListener("submit", (event) => {
     newSessionFormEl.reset();
 });
 
+// -----------------------------
 // Define functions for data validation
+// -----------------------------
 function checkDateInvalid(date) {
     // Check that date is not null.
     if (!date) {
@@ -66,17 +99,31 @@ function checkTimesInvalid(startTime, endTime) {
     return false;
 }
 
-function storeNewSession(date, startTime, endTime) {
+function checkSuburbsInvalid(startSuburb, endSuburb) {
+    // Check that the inputted suburbs are part of the list of NSW suburbs, and neither is null.
+    if (!startSuburb || !endSuburb || !allSuburbs.includes(startSuburb) || !allSuburbs.includes(endSuburb)) {
+        newSessionFormEl.reset()
+        alert("The start/end suburbs are invalid.")
+        return true;
+    }
+    // Else
+    return false;
+}
+
+// -----------------------------
+// Define other functions
+// -----------------------------
+function storeNewSession(date, startTime, endTime, startSuburb, endSuburb) {
     // Get data from storage. 
     const sessions = getAllStoredSessions();
 
     // Add the new session object to the end of the array of session objects.
-    sessions.push({ date, startTime, endTime });
+    sessions.push({ date, startTime, endTime, startSuburb, endSuburb });
 
     // Sort the array so that sessions are ordered by date, from newest
     // to oldest.
     sessions.sort((a, b) => {
-    return new Date(b.date) - new Date(a.date);
+        return new Date(b.date) - new Date(a.date);
     });
 
     // Store the updated array back in the storage.
@@ -113,11 +160,11 @@ function renderPastSessions() {
 
     // Loop over all sessions and render them.
     sessions.forEach((session) => {
-    const sessionEl = document.createElement("li");
-    sessionEl.textContent = `${formatDate(session.date)} from ${formatTime(
-        session.startTime,
-    )} to ${formatTime(session.endTime)}`;
-    pastSessionList.appendChild(sessionEl);
+        const sessionEl = document.createElement("li");
+        sessionEl.textContent = `${formatDate(session.date)} from ${formatTime(
+            session.startTime,
+        )} to ${formatTime(session.endTime)} | ${session.startSuburb} to ${session.endSuburb}`;
+        pastSessionList.appendChild(sessionEl);
     });
 
     pastSessionContainer.appendChild(pastSessionHeader);

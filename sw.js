@@ -12,6 +12,7 @@ const APP_STATIC_RESOURCES = [
     "/app.js",
     "/LearnerHours.json",
     "/icons/icon2.jpg",
+    "/NSW_suburbs.json"
 ]; 
 
 self.addEventListener("install", (event) => {
@@ -34,12 +35,12 @@ self.addEventListener("activate", (event) => {
             // Go through the list
             await Promise.all(
             names.map((name) => {
-                // Check if it is not the current cache
-                if (name !== CACHE_NAME) {
-            // delete it
-                return caches.delete(name);
-                }
-            }),
+                    // Check if it is not the current cache
+                    if (name !== CACHE_NAME) {
+                        // delete it
+                        return caches.delete(name);
+                    }
+                }),
             );
             // Set the current service worker as the controller
             await clients.claim();
@@ -62,8 +63,8 @@ self.addEventListener("fetch", (event) => {
             const cache = await caches.open(CACHE_NAME);
             const cachedResponse = await cache.match(event.request.url);
             if (cachedResponse) {
-            // Return the cached response if it's available.
-            return cachedResponse;
+                // Return the cached response if it's available.
+                return cachedResponse;
             }
             // If resource isn't in the cache, return a 404.
             return new Response(null, { status: 404 });
