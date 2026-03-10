@@ -12,7 +12,7 @@ const APP_STATIC_RESOURCES = [
     "/app.js",
     "/LearnerHours.json",
     "/icons/icon2.jpg",
-    "/NSW_suburbs.json"
+    "/AU_suburbs.json"
 ]; 
 
 self.addEventListener("install", (event) => {

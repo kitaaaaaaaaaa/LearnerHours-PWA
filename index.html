@@ -28,15 +28,29 @@
           </p>
         </div>
         <p>
-          <label for="start-suburb">Start Suburb</label>
-          <input list="suburbs" id="start-suburb" type="text" required>
+          <label for="state-territory">State/Territory</label>
+          <select id="state-territory">
+            <option value="NSW">New South Wales</option>
+            <option value="VIC">Victoria</option>
+            <option value="QLD">Queensland</option>
+            <option value="SA">South Australia</option>
+            <option value="WA">Western Australia</option>
+            <option value="TAS">Tasmania</option>
+            <option value="ACT">Australian Capital Territory</option>
+            <option value="NT">Northern Territory</option>
+          </select>
         </p>
-        <p>
-          <label for="end-suburb">End Suburb</label>
-          <input list="suburbs" type="text" id="end-suburb" required>
-        </p>
-        <datalist id="suburbs">
-        </datalist>
+        <div style="margin-left: 30px;">
+          <p>
+            <label for="start-suburb">Start Suburb</label>
+            <input list="suburbs" id="start-suburb" type="text" required autocomplete="off">
+          </p>
+          <p>
+            <label for="end-suburb">End Suburb</label>
+            <input list="suburbs" type="text" id="end-suburb" required autocomplete="off">
+          </p>
+          <datalist id="suburbs"></datalist>
+        </div>
       </fieldset>
       <p>
         <button type="submit">Add Session</button>
@@ -47,10 +61,10 @@
 
     <!-- Register the app's service worker -->
 
-    <script>
+    <!-- <script>
       if ("serviceWorker" in navigator) {
         navigator.serviceWorker.register("sw.js")
       }
-    </script>
+    </script> -->
   </body>
 </html>

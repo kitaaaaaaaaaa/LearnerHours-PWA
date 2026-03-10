@@ -5,8 +5,9 @@ const dateInputEl = document.getElementById("date");
 const startTimeInputEl = document.getElementById("start-time");
 const endTimeInputEl = document.getElementById("end-time"); 
 
-const startSuburbInputEl = document.getElementById("start-suburb")
-const endSuburbInputEl = document.getElementById("end-suburb")
+const stateTerritoryEl = document.getElementById("state-territory");
+const startSuburbInputEl = document.getElementById("start-suburb");
+const endSuburbInputEl = document.getElementById("end-suburb");
 
 const STORAGE_KEY = "learner-hours";
 const pastSessionContainer = document.getElementById("past-sessions");
@@ -15,18 +16,28 @@ let allSuburbs = []
 const suburbsEl = document.getElementById("suburbs");
 
 // Create autocomplete options for location input
-fetch('NSW_suburbs.json')
-    .then(response => response.json())
-    .then(data => {
-        allSuburbs = data.map(item => `${item.suburb} ${item.postcode}`)
+fetch('AU_suburbs.json') // Get a list of all valid suburbs
+.then(response => response.json())
+.then(data => {
+    allSuburbs = data.map(item => `${item.suburb} ${item.postcode} ${item.state}`); // Format it into an array
+    updateSuggestedSuburbs() // Run the function when the page starts
+});
 
-        // Create datalist elements for each suburb in the JSON file
-        allSuburbs.forEach(element => {
-            const option = document.createElement("option");
-            option.value = element;
-            suburbsEl.appendChild(option);
-        });
+// Update suggestions if dropdown changes
+stateTerritoryEl.addEventListener("change", updateSuggestedSuburbs)
+
+function updateSuggestedSuburbs() {
+    filteredSuburbs = allSuburbs.filter(item => item.includes(stateTerritoryEl.value));
+
+    suburbsEl.replaceChildren(); // Remove existing datalist elements
+
+    // Create datalist elements for each suburb in the JSON file
+    filteredSuburbs.forEach(element => {
+        const option = document.createElement("option");
+        option.value = element;
+        suburbsEl.appendChild(option);
     });
+}
 
 
 // Listen to form submissions.
