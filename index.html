@@ -17,16 +17,26 @@
           <label for="date">Date</label>
           <input type="date" id="date" required />
         </p>
-	<div style="margin-left:30px;">
-	<p>
-          <label for="start-time">Start time</label>
-          <input type="time" id="start-time" required />
+        <div style="margin-left:30px;">
+          <p>
+            <label for="start-time">Start time</label>
+            <input type="time" id="start-time" required />
+          </p>
+          <p>
+            <label for="end-time">End time</label>
+            <input type="time" id="end-time" required />
+          </p>
+        </div>
+        <p>
+          <label for="start_location">Start Suburb</label>
+          <input list="suburbs" id="start_location" type="text" required>
+          <datalist id="suburbs">
+          </datalist>
         </p>
         <p>
-          <label for="end-time">End time</label>
-          <input type="time" id="end-time" required />
+          <label for="end_location">End Suburb</label>
+          <input type="text" id="end_location" required>
         </p>
-	</div>
       </fieldset>
       <p>
         <button type="submit">Add Session</button>
