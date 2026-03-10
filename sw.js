@@ -11,7 +11,7 @@ const APP_STATIC_RESOURCES = [
     "/style.css",
     "/app.js",
     "/LearnerHours.json",
-    "/icons/icon2.png",
+    "/icons/icon2.jpg",
 ]; 
 
 self.addEventListener("install", (event) => {
