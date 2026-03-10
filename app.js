@@ -111,7 +111,7 @@ function checkTimesInvalid(startTime, endTime) {
 }
 
 function checkSuburbsInvalid(startSuburb, endSuburb) {
-    // Check that the inputted suburbs are part of the list of NSW suburbs, and neither is null.
+    // Check that the inputted suburbs are part of the list of suburbs, and neither is null.
     if (!startSuburb || !endSuburb || !allSuburbs.includes(startSuburb) || !allSuburbs.includes(endSuburb)) {
         newSessionFormEl.reset()
         alert("The start/end suburbs are invalid.")
