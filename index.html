@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Learner Driving Hours</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="manifest" href="LearnerHours.json">
+    <link rel="icon" href="icons/icon2.jpg">
+  </head>
+  <body>
+    <h1>Driving Hours</h1>
+    <form>
+      <fieldset>
+        <legend>Enter the date and start & end times</legend>
+        <p>
+          <label for="date">Date</label>
+          <input type="date" id="date" required />
+        </p>
+	<div style="margin-left:30px;">
+	<p>
+          <label for="start-time">Start time</label>
+          <input type="time" id="start-time" required />
+        </p>
+        <p>
+          <label for="end-time">End time</label>
+          <input type="time" id="end-time" required />
+        </p>
+	</div>
+      </fieldset>
+      <p>
+        <button type="submit">Add Session</button>
+      </p>
+    </form>
+    <section id="past-sessions"></section>
+    <script src="app.js" defer></script>
+
+    <!-- Register the app's service worker -->
+
+    <script>
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("sw.js")
+      }
+    </script>
+  </body>
+</html>
