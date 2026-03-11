@@ -15,8 +15,10 @@ const pastSessionContainer = document.getElementById("past-sessions");
 let allSuburbs = []
 const suburbsEl = document.getElementById("suburbs");
 
+// -----------------------------
 // Create autocomplete options for location input
-fetch('AU_suburbs.json') // Get a list of all valid suburbs
+// -----------------------------
+fetch('au-suburbs.json') // Get a list of all valid suburbs
 .then(response => response.json())
 .then(data => {
     allSuburbs = data.map(item => `${item.suburb} ${item.postcode} ${item.state}`); // Format it into an array
@@ -39,8 +41,28 @@ function updateSuggestedSuburbs() {
     });
 }
 
+// -----------------------------
+// Handle showing/hiding the popup to add a new session
+// -----------------------------
+const popupEl = document.getElementById("add-session-popup");
+const popupBtn = document.getElementById("add-session-btn");
+const cancelPopupBtn = document.getElementById('cancel-add-session')
 
+function showSessionPopup() {
+    newSessionFormEl.reset();
+    popupEl.classList.remove("hidden");
+}
+
+function hideSessionPopup() {
+    popupEl.classList.add("hidden")
+}
+
+popupBtn.addEventListener("click", showSessionPopup);
+cancelPopupBtn.addEventListener("click", hideSessionPopup);
+
+// -----------------------------
 // Listen to form submissions.
+// -----------------------------
 newSessionFormEl.addEventListener("submit", (event) => {
     // console.log('You have clicked on the button.'); 
 
@@ -78,9 +100,11 @@ newSessionFormEl.addEventListener("submit", (event) => {
 
     // Refresh the UI.
     renderPastSessions();
+    renderTotalHoursLogged();
 
     // Reset the form.
     newSessionFormEl.reset();
+    hideSessionPopup();
 });
 
 // -----------------------------
@@ -174,7 +198,8 @@ function renderPastSessions() {
         const sessionEl = document.createElement("li");
         sessionEl.textContent = `${formatDate(session.date)} from ${formatTime(
             session.startTime,
-        )} to ${formatTime(session.endTime)} | ${session.startSuburb} to ${session.endSuburb}`;
+        )} to ${formatTime(session.endTime)} | ${session.startSuburb} to ${session.endSuburb}
+        | Duration - ${timeDifference(session.startTime, session.endTime)}`;
         pastSessionList.appendChild(sessionEl);
     });
 
@@ -219,4 +244,56 @@ function formatTime(timeString) {
     return formattedTime;
 }
 
-renderPastSessions()
+// Function to calculate time difference given times with format HH:MM
+function timeDifference(startTime, endTime) {
+    // Convert times into minutes
+    const totalStartMinutes = HHMMToMinutes(startTime);
+    const totalEndMinutes = HHMMToMinutes(endTime);
+    
+    // Calculate difference and reformat into HH:MM
+    const difference = totalEndMinutes - totalStartMinutes;
+
+    // Return HH:MM
+    return minutesToHHMM(difference);
+}
+
+function addSessionTimes() {
+    const sessions = getAllStoredSessions();
+    let totalSessionMinutes = 0;
+
+    sessions.forEach((session) => {
+        duration = timeDifference(session.startTime, session.endTime);
+        
+        // Convert times into minutes
+        const totalDurationMinutes = HHMMToMinutes(duration);
+        totalSessionMinutes = totalSessionMinutes + totalDurationMinutes;
+    })
+    
+    return minutesToHHMM(totalSessionMinutes);
+}
+
+function HHMMToMinutes(time) {
+    hours = time.split(":")[0]
+    minutes = time.split(":")[1]
+
+    return Number(hours * 60) + Number(minutes);
+}
+
+function minutesToHHMM(minutes) {
+    hours = Math.floor(minutes / 60);
+    minutes = minutes % 60
+
+    return String(`${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`);
+}
+
+
+// Render the total hours logged on the page
+const totalHoursEl = document.getElementById("total-hours");
+
+function renderTotalHoursLogged() {
+    totalHoursEl.textContent = addSessionTimes() + " hours logged";
+}
+
+
+renderPastSessions();
+renderTotalHoursLogged();
