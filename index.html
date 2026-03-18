@@ -19,15 +19,18 @@
           <p>
             <label for="date">Date</label>
             <input type="date" id="date" required />
+            <span class="error hidden" id="date-error">Date Invalid</span>
           </p>
           <div style="margin-left:30px;">
             <p>
               <label for="start-time">Start time</label>
               <input type="time" id="start-time" required />
+              <span class="error hidden" id="start-time-error">Start time Invalid</span>
             </p>
             <p>
               <label for="end-time">End time</label>
               <input type="time" id="end-time" required />
+              <span class="error hidden" id="end-time-error">End time Invalid</span>
             </p>
           </div>
           <p>
@@ -47,10 +50,12 @@
             <p>
               <label for="start-suburb">Start Suburb</label>
               <input list="suburbs-list" id="start-suburb" type="text" required autocomplete="off">
+              <span class="error hidden" id="start-suburb-error">Start Suburb Invalid</span>
             </p>
             <p>
               <label for="end-suburb">End Suburb</label>
               <input list="suburbs-list" type="text" id="end-suburb" required autocomplete="off">
+              <span class="error hidden" id="end-suburb-error">End Suburb Invalid</span>
             </p>
             <datalist id="suburbs-list"></datalist>
           </div>
@@ -70,15 +75,18 @@
           <p>
             <label for="edit-date">Date</label>
             <input type="date" id="edit-date" required />
+            <span class="error hidden" id="edit-date-error">Date Invalid</span>
           </p>
           <div style="margin-left:30px;">
             <p>
               <label for="start-time">Start time</label>
               <input type="time" id="edit-start-time" required />
+              <span class="error hidden" id="edit-start-time-error">Start time Invalid</span>
             </p>
             <p>
               <label for="end-time">End time</label>
               <input type="time" id="edit-end-time" required />
+              <span class="error hidden" id="edit-end-time-error">End time Invalid</span>
             </p>
           </div>
           <p>
@@ -98,10 +106,12 @@
             <p>
               <label for="edit-start-suburb">Start Suburb</label>
               <input list="edit-suburbs-list" id="edit-start-suburb" type="text" required autocomplete="off">
+              <span class="error hidden" id="edit-start-suburb-error">Start Suburb Invalid</span>
             </p>
             <p>
               <label for="edit-end-suburb">End Suburb</label>
               <input list="edit-suburbs-list" type="text" id="edit-end-suburb" required autocomplete="off">
+              <span class="error hidden" id="edit-end-suburb-error">End Suburb Invalid</span>
             </p>
             <datalist id="edit-suburbs-list"></datalist>
           </div>

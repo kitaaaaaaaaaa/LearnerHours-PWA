@@ -11,11 +11,11 @@
     "icons": [
         {
             "src": "icons/icon1.png",
-            "sizes": "48x48"
+            "sizes": "48x48 192x192"
         },
-        {
+        {   
             "src": "icons/icon2.jpg",
-            "sizes": "72x72 96x96",
+            "sizes": "72x72 96x96 512x512",
             "purpose": "maskable"
         }
     ]

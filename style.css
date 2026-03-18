@@ -2,24 +2,25 @@ body {
   margin: 1vh 1vw;
   background-color: #efe;
 }
-ul,
-fieldset,
-legend {
+
+ul, fieldset, legend {
   border: 1px solid;
   border-radius: 5px;
   background-color: #fff;
   overflow: hidden;
 }
+
 ul {
   padding: 0;
   font-family: monospace;
 }
-li,
-legend {
+
+li, legend {
   list-style-type: none;
   padding: 0.2em 0.5em;
   background-color: #cfc;
 }
+
 li:nth-of-type(even) {
   background-color: inherit;
 }
@@ -59,4 +60,21 @@ li:nth-of-type(even) {
 .hidden {
   display: none;
   opacity: 0;
+}
+
+.error {
+  color: red;
+  font-size: 0.8em;
+}
+
+@media (max-width: 768px) {
+  .error {
+    margin-top: 3px;
+    font-size: 0.7em;
+    display: block;
+  }
+  .error.hidden {
+    margin-top: 0;
+    display: none;
+  }
 }
