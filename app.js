@@ -92,7 +92,7 @@ newSessionFormEl.addEventListener("submit", (event) => {
     }
     
     // Check if the times are invalid
-    if (checkTimesInvalid(startTime, endTime, date, "start-time-error", "end-time-error")) {
+    if (checkTimesInvalid("" , startTime, endTime, date, "start-time-error", "end-time-error")) {
         // If the times are invalid, exit.
         invalid = true;
     }
@@ -109,11 +109,11 @@ newSessionFormEl.addEventListener("submit", (event) => {
     }
 
     // Store the new session in our client-side storage.
-    storeNewSession(date, startTime, endTime, stateTerritory, startSuburb, endSuburb);
+    sessionId = generateUniqueId();
+    storeNewSession(sessionId, date, startTime, endTime, stateTerritory, startSuburb, endSuburb);
 
     // Refresh the UI.
-    renderPastSessions();
-    renderTotalHoursLogged();
+    refreshUI();
 
     // Reset and hide the form
     newSessionFormEl.reset();
@@ -126,7 +126,7 @@ newSessionFormEl.addEventListener("submit", (event) => {
 // -----------------------------
 function checkDateInvalid(date, errorElementId) {
     // Check that date is not null and is in the past
-    const today = new Date().toISOString().slice(0, 10)
+    const today = new Date().toLocaleDateString("en-CA");
 
     if (!date || date > today) {
     newSessionFormEl.reset();
@@ -138,13 +138,12 @@ function checkDateInvalid(date, errorElementId) {
     return false;
     }
 
-function checkTimesInvalid(startTime, endTime, date, startTimeErrorElementId, endTimeErrorElementId) {
+function checkTimesInvalid(sessionId, startTime, endTime, date, startTimeErrorElementId, endTimeErrorElementId) {
     let invalid = false;
 
     // Check that end time is after start time, and neither is null.
     if (!startTime || !endTime || startTime > endTime) {
         showError(startTimeErrorElementId, "Start time must be before end time");
-        showError(endTimeErrorElementId, "Start time must be before end time");
         invalid = true;
     } else if (!startTime) {
         showError(startTimeErrorElementId, "Start time is required");
@@ -152,12 +151,15 @@ function checkTimesInvalid(startTime, endTime, date, startTimeErrorElementId, en
     } else if (!endTime) {
         showError(endTimeErrorElementId, "End time is required");
         invalid = true;
+    } else if (timeDifference(startTime, endTime) > "04:00") {
+        showError(endTimeErrorElementId, "Session cannot be longer than 4 hours");
+        invalid = true;
     }
     
     // Check that the start and end times doesn't fall within an existing session
     const sessions = getAllStoredSessions()
     sessions.forEach((session) => {
-        if (session.date === date) {
+        if (session.date === date && session.sessionId !== sessionId) {
             if (startTime > session.startTime && startTime < session.endTime) {
                 showError(startTimeErrorElementId, "Start time conflicts with existing session");
                 invalid = true;
@@ -192,12 +194,12 @@ function checkSuburbsInvalid(startSuburb, endSuburb, startSuburbErrorElementId, 
 // -----------------------------
 // Define other functions
 // -----------------------------
-function storeNewSession(date, startTime, endTime, stateTerritory, startSuburb, endSuburb) {
+function storeNewSession(sessionId, date, startTime, endTime, stateTerritory, startSuburb, endSuburb) {
     // Get data from storage
     const sessions = getAllStoredSessions();
 
     // Add the new session object to the end of the array of session objects.
-    sessions.push({ date, startTime, endTime, stateTerritory, startSuburb, endSuburb });
+    sessions.push({ sessionId, date, startTime, endTime, stateTerritory, startSuburb, endSuburb });
 
     // Sort the array so that sessions are ordered by date, from newest
     // to oldest.
@@ -231,6 +233,22 @@ function getAllStoredSessions() {
     return sessions;
 }
 
+function deleteSession(sessionId) {
+    const sessions = getAllStoredSessions();
+
+    // Loop through the sessions and delete the specified session
+    sessions.forEach((session) => {
+        if (sessionId === session.sessionId) {
+            const index = sessions.indexOf(session);
+            sessions.splice(index, 1);
+        }
+    })
+
+    // Save the edited session array and refresh the UI
+    storeEditedSessionArray(sessions);
+    refreshUI();
+}
+
 // -----------------------------
 // Render the past sessions on the page
 // -----------------------------
@@ -259,6 +277,18 @@ function renderPastSessions() {
         const editEl = document.createElement("button");
         editEl.textContent = "Edit";
 
+        // Create a delete button for each session
+        const deleteEl = document.createElement("button");
+        deleteEl.textContent = "Delete";
+
+        // Attach an event listener for when users want to DELETE sessions
+        deleteEl.addEventListener("click", () => {
+            const confirmation = confirm("Are you sure you want to delete this session?");
+            if (confirmation) {
+                deleteSession(session.sessionId);
+            }
+        });
+        
         // Attach an event listener for when users want to EDIT sessions
         editEl.addEventListener("click", (event) => {
             const editPopupEl = document.getElementById("edit-session-popup");
@@ -321,12 +351,17 @@ function renderPastSessions() {
                 const editedStateTerritory = editStateTerritoryInputEl.value;
                 const editedStartSuburb = editStartSuburbInputEl.value;
                 const editedEndSuburb = editEndSuburbInputEl.value;
+                const sessionId = session.sessionId;
 
                 hideAllErrors();
                 // Validate user inputs
                 if (checkDateInvalid(editedDate, "edit-date-error")) {invalid = true;};
-                if (checkTimesInvalid(editedStartTime, editedEndTime, editedDate, "edit-start-time-error")) {invalid = true;};
+                if (checkTimesInvalid(sessionId, editedStartTime, editedEndTime, editedDate, "edit-start-time-error", "edit-end-time-error")) {invalid = true;};
                 if (checkSuburbsInvalid(editedStartSuburb, editedEndSuburb, "edit-start-suburb-error", "edit-end-suburb-error")) {invalid = true;};
+
+                if (invalid) {
+                    return;
+                }
 
                 // Store the edited session in client-side storage
                 session.date = editedDate;
@@ -336,15 +371,10 @@ function renderPastSessions() {
                 session.startSuburb = editedStartSuburb;
                 session.endSuburb = editedEndSuburb;
 
-                if (invalid) {
-                    return;
-                }
-
                 storeEditedSessionArray(sessions);
 
                 // Refresh the UI
-                renderPastSessions();
-                renderTotalHoursLogged();
+                refreshUI();
 
                 // Reset and hide the form
                 editSessionFormEl.reset();
@@ -360,12 +390,19 @@ function renderPastSessions() {
         ${session.startSuburb} to ${session.endSuburb}
         | Duration - ${timeDifference(session.startTime, session.endTime)}`;
 
-        sessionEl.appendChild(editEl)
+        sessionEl.appendChild(editEl);
+        sessionEl.appendChild(deleteEl);
         pastSessionList.appendChild(sessionEl);
     });
 
     pastSessionContainer.appendChild(pastSessionHeader);
     pastSessionContainer.appendChild(pastSessionList);
+}
+
+function refreshUI() {
+    renderPastSessions();
+    renderTotalHoursLogged();
+    renderTotalTrips();
 }
 
 function formatDate(dateString) {
@@ -447,10 +484,15 @@ function minutesToHHMM(minutes) {
 
 
 // Render the total hours logged on the page
-const totalHoursEl = document.getElementById("total-hours");
-
 function renderTotalHoursLogged() {
-    totalHoursEl.textContent = addSessionTimes() + " hours logged";
+    const totalHoursEl = document.getElementById("total-hours");
+    totalHoursEl.textContent = addSessionTimes();
+}
+
+function renderTotalTrips() {
+    const sessions = getAllStoredSessions();
+    const totalTripsEl = document.getElementById("total-trips");
+    totalTripsEl.textContent = sessions.length;
 }
 
 function showError(elementId, message) {
@@ -470,5 +512,19 @@ function hideAllErrors() {
     });
 }
 
-renderPastSessions();
-renderTotalHoursLogged();
+// Function to generate unique IDs for sessions
+function generateUniqueId() {
+    const sessions = getAllStoredSessions();
+    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+    let uniqueId = characters[Math.floor(Math.random()*36)]+characters[Math.floor(Math.random()*36)]+characters[Math.floor(Math.random()*36)]+characters[Math.floor(Math.random()*36)]+"-"+characters[Math.floor(Math.random()*36)]+characters[Math.floor(Math.random()*36)]+characters[Math.floor(Math.random()*36)]+characters[Math.floor(Math.random()*36)];
+    
+    sessions.forEach((session) => {
+        if (session.id === uniqueId) {
+            uniqueId = generateUniqueId();
+        }
+    })
+
+    return uniqueId;
+}
+
+refreshUI();

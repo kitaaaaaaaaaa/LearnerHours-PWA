@@ -1,6 +1,13 @@
 body {
-  margin: 1vh 1vw;
+  padding: 2vh 2vw;
+  margin: 0;
   background-color: #efe;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
 }
 
 ul, fieldset, legend {
@@ -77,4 +84,18 @@ li:nth-of-type(even) {
     margin-top: 0;
     display: none;
   }
+}
+
+.tile {
+  background: #ffffff;
+  border: 1px solid black;
+  border-radius: 5px;
+  text-align: center;
+  padding: 10px;
+}
+
+#tile-container {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
 }
