@@ -112,13 +112,14 @@ newSessionFormEl.addEventListener("submit", (event) => {
     sessionId = generateUniqueId();
     storeNewSession(sessionId, date, startTime, endTime, stateTerritory, startSuburb, endSuburb);
 
-    // Refresh the UI.
-    refreshUI();
-
+    
     // Reset and hide the form
     newSessionFormEl.reset();
     hideSessionPopup();
     hideAllErrors();
+    
+    // Refresh the UI.
+    refreshUI();
 });
 
 // -----------------------------
@@ -255,14 +256,15 @@ function deleteSession(sessionId) {
 function renderPastSessions() {
     // get the parsed string of sessions, or an empty array.
     const sessions = getAllStoredSessions();
+    
+    // Clear the list of past sessions, since we're going to re-render it.
+    pastSessionContainer.textContent = "";
 
     // exit if there are no sessions
     if (sessions.length === 0) {
         return;
     }
 
-    // Clear the list of past sessions, since we're going to re-render it.
-    pastSessionContainer.textContent = "";
 
     const pastSessionHeader = document.createElement("h2");
     pastSessionHeader.textContent = "Past Sessions";
