@@ -1,173 +1,176 @@
 <!DOCTYPE html>
 <html lang="en-US">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" />
-    <title>Learner Driving Hours</title>
-    <link rel="stylesheet" href="style.css" />
-    <link rel="manifest" href="LearnerHours.json">
-    <link rel="icon" href="icons/icon2.jpg">
-  </head>
-  <body class="figtree-400">
-    <h1>Driving Hours</h1>
-    <div id="tile-container">
-      <div class="tile">
-        <span id="total-hours"></span>
-        <br>Hours Logged
-      </div>
-      <div class="tile">
-        <span id="total-trips"></span>
-        <br>Trips
-      </div>
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <title>Learner Driving Hours</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="manifest" href="LearnerHours.json">
+  <link rel="icon" href="icons/icon2.jpg">
+</head>
+
+<body class="figtree-400">
+  <h1>Driving Hours</h1>
+  <div id="tile-container">
+    <div class="tile">
+      <span id="total-hours"></span>
+      <br>Hours Logged
     </div>
-    
-    
-    <button id="add-session-btn" type="button">Create new session</button>
-    
-    
-    <div class="popup-container hidden" id="add-session-popup">
-      <form id="add-session-form">
-        <fieldset>
-          <legend>Enter the date and start & end times</legend>
-          <p>
-            <label for="date">Date</label>
-            <input type="date" id="date" required />
-            <span class="error hidden" id="date-error">Date Invalid</span>
-          </p>
-          <div style="margin-left:30px;">
-            <p>
-              <label for="start-time">Start time</label>
-              <input type="time" id="start-time" required />
-              <span class="error hidden" id="start-time-error">Start time Invalid</span>
-            </p>
-            <p>
-              <label for="end-time">End time</label>
-              <input type="time" id="end-time" required />
-              <span class="error hidden" id="end-time-error">End time Invalid</span>
-            </p>
-          </div>
-          <p>
-            <label for="state-territory">State/Territory</label>
-            <select id="state-territory" required>
-              <option value="NSW">New South Wales</option>
-              <option value="VIC">Victoria</option>
-              <option value="QLD">Queensland</option>
-              <option value="SA">South Australia</option>
-              <option value="WA">Western Australia</option>
-              <option value="TAS">Tasmania</option>
-              <option value="ACT">Australian Capital Territory</option>
-              <option value="NT">Northern Territory</option>
-            </select>
-          </p>
-          <div style="margin-left: 30px;">
-            <p>
-              <label for="start-suburb">Start Suburb</label>
-              <input list="suburbs-list" id="start-suburb" type="text" required autocomplete="off">
-              <span class="error hidden" id="start-suburb-error">Start Suburb Invalid</span>
-            </p>
-            <p>
-              <label for="end-suburb">End Suburb</label>
-              <input list="suburbs-list" type="text" id="end-suburb" required autocomplete="off">
-              <span class="error hidden" id="end-suburb-error">End Suburb Invalid</span>
-            </p>
-            <datalist id="suburbs-list"></datalist>
-          </div>
-        </fieldset>
-        <p style="margin-bottom: 2px;">
-          <button type="submit">Add Session</button>
-          <button id="cancel-add-session">Cancel</button>
+    <div class="tile">
+      <span id="total-trips"></span>
+      <br>Trips
+    </div>
+  </div>
+
+
+  <button id="add-session-btn" type="button">Create new session</button>
+
+
+  <div class="popup-container hidden" id="add-session-popup">
+    <form id="add-session-form">
+      <fieldset>
+        <legend>Enter the date and start & end times</legend>
+        <p>
+          <label for="date">Date</label>
+          <input type="date" id="date" required />
+          <span class="error hidden" id="date-error">Date Invalid</span>
         </p>
-      </form>
-    </div>
-
-
-    <div class="popup-container hidden" id="edit-session-popup">
-      <form id="edit-session-form">
-        <fieldset>
-          <legend>Edit the date and start & end times</legend>
+        <div style="margin-left:30px;">
           <p>
-            <label for="edit-date">Date</label>
-            <input type="date" id="edit-date" required />
-            <span class="error hidden" id="edit-date-error">Date Invalid</span>
+            <label for="start-time">Start time</label>
+            <input type="time" id="start-time" required />
+            <span class="error hidden" id="start-time-error">Start time Invalid</span>
           </p>
-          <div style="margin-left:30px;">
-            <p>
-              <label for="start-time">Start time</label>
-              <input type="time" id="edit-start-time" required />
-              <span class="error hidden" id="edit-start-time-error">Start time Invalid</span>
-            </p>
-            <p>
-              <label for="end-time">End time</label>
-              <input type="time" id="edit-end-time" required />
-              <span class="error hidden" id="edit-end-time-error">End time Invalid</span>
-            </p>
-          </div>
           <p>
-            <label for="state-territory">State/Territory</label>
-            <select id="edit-state-territory" required>
-              <option value="NSW">New South Wales</option>
-              <option value="VIC">Victoria</option>
-              <option value="QLD">Queensland</option>
-              <option value="SA">South Australia</option>
-              <option value="WA">Western Australia</option>
-              <option value="TAS">Tasmania</option>
-              <option value="ACT">Australian Capital Territory</option>
-              <option value="NT">Northern Territory</option>
-            </select>
+            <label for="end-time">End time</label>
+            <input type="time" id="end-time" required />
+            <span class="error hidden" id="end-time-error">End time Invalid</span>
           </p>
-          <div style="margin-left: 30px;">
-            <p>
-              <label for="edit-start-suburb">Start Suburb</label>
-              <input list="edit-suburbs-list" id="edit-start-suburb" type="text" required autocomplete="off">
-              <span class="error hidden" id="edit-start-suburb-error">Start Suburb Invalid</span>
-            </p>
-            <p>
-              <label for="edit-end-suburb">End Suburb</label>
-              <input list="edit-suburbs-list" type="text" id="edit-end-suburb" required autocomplete="off">
-              <span class="error hidden" id="edit-end-suburb-error">End Suburb Invalid</span>
-            </p>
-            <datalist id="edit-suburbs-list"></datalist>
-          </div>
-        </fieldset>
-        <p style="margin-bottom: 2px;">
-          <button type="submit">Edit Session</button>
-          <button id="cancel-edit-session">Cancel</button>
+        </div>
+        <p>
+          <label for="state-territory">State/Territory</label>
+          <select id="state-territory" required>
+            <option value="NSW">New South Wales</option>
+            <option value="VIC">Victoria</option>
+            <option value="QLD">Queensland</option>
+            <option value="SA">South Australia</option>
+            <option value="WA">Western Australia</option>
+            <option value="TAS">Tasmania</option>
+            <option value="ACT">Australian Capital Territory</option>
+            <option value="NT">Northern Territory</option>
+          </select>
         </p>
-      </form>
-    </div>
+        <div style="margin-left: 30px;">
+          <p>
+            <label for="start-suburb">Start Suburb</label>
+            <input list="suburbs-list" id="start-suburb" type="text" required autocomplete="off">
+            <span class="error hidden" id="start-suburb-error">Start Suburb Invalid</span>
+          </p>
+          <p>
+            <label for="end-suburb">End Suburb</label>
+            <input list="suburbs-list" type="text" id="end-suburb" required autocomplete="off">
+            <span class="error hidden" id="end-suburb-error">End Suburb Invalid</span>
+          </p>
+          <datalist id="suburbs-list"></datalist>
+        </div>
+      </fieldset>
+      <p style="margin-bottom: 2px;">
+        <button type="submit">Add Session</button>
+        <button id="cancel-add-session">Cancel</button>
+      </p>
+    </form>
+  </div>
 
-    <div id="sessions-container">
-      <form id="search-filter-form">
-        <fieldset id="fieldset-search">
-          <legend>Search Sessions</legend>
-            <div>
-              <label for="search-date">Date</label>
-              <input type="date" id="search-date">
-            </div>
-            <div>
-              <label for="search-suburb">Suburb</label>
-              <input list="search-suburbs-list" type="text" id="search-suburb" autocomplete="off">
-              <datalist id="search-suburbs-list"></datalist>
-            </div>
-            
-            <button type="submit">Search</button>
-            <button type="reset" id="clear-search" onclick="refreshUI()">Clear</button>
-        </fieldset>
-      </form>
-      
-      
-      <section id="past-sessions"></section>
-    </div>
 
-    <script type="text/javascript" src="dist/purify.min.js"></script>
-    <script src="app.js" defer></script>
+  <div class="popup-container hidden" id="edit-session-popup">
+    <form id="edit-session-form">
+      <fieldset>
+        <legend>Edit the date and start & end times</legend>
+        <p>
+          <label for="edit-date">Date</label>
+          <input type="date" id="edit-date" required />
+          <span class="error hidden" id="edit-date-error">Date Invalid</span>
+        </p>
+        <div style="margin-left:30px;">
+          <p>
+            <label for="start-time">Start time</label>
+            <input type="time" id="edit-start-time" required />
+            <span class="error hidden" id="edit-start-time-error">Start time Invalid</span>
+          </p>
+          <p>
+            <label for="end-time">End time</label>
+            <input type="time" id="edit-end-time" required />
+            <span class="error hidden" id="edit-end-time-error">End time Invalid</span>
+          </p>
+        </div>
+        <p>
+          <label for="state-territory">State/Territory</label>
+          <select id="edit-state-territory" required>
+            <option value="NSW">New South Wales</option>
+            <option value="VIC">Victoria</option>
+            <option value="QLD">Queensland</option>
+            <option value="SA">South Australia</option>
+            <option value="WA">Western Australia</option>
+            <option value="TAS">Tasmania</option>
+            <option value="ACT">Australian Capital Territory</option>
+            <option value="NT">Northern Territory</option>
+          </select>
+        </p>
+        <div style="margin-left: 30px;">
+          <p>
+            <label for="edit-start-suburb">Start Suburb</label>
+            <input list="edit-suburbs-list" id="edit-start-suburb" type="text" required autocomplete="off">
+            <span class="error hidden" id="edit-start-suburb-error">Start Suburb Invalid</span>
+          </p>
+          <p>
+            <label for="edit-end-suburb">End Suburb</label>
+            <input list="edit-suburbs-list" type="text" id="edit-end-suburb" required autocomplete="off">
+            <span class="error hidden" id="edit-end-suburb-error">End Suburb Invalid</span>
+          </p>
+          <datalist id="edit-suburbs-list"></datalist>
+        </div>
+      </fieldset>
+      <p style="margin-bottom: 2px;">
+        <button type="submit">Edit Session</button>
+        <button id="cancel-edit-session">Cancel</button>
+      </p>
+    </form>
+  </div>
 
-    <!-- Register the app's service worker -->
+  <div id="sessions-container">
+    <form id="search-filter-form">
+      <fieldset id="fieldset-search">
+        <legend>Search Sessions</legend>
+        <div>
+          <label for="search-date">Date</label>
+          <input type="date" id="search-date">
+        </div>
+        <div>
+          <label for="search-suburb">Suburb</label>
+          <input list="search-suburbs-list" type="text" id="search-suburb" autocomplete="off">
+          <datalist id="search-suburbs-list"></datalist>
+        </div>
 
-    <!-- <script>
+        <button type="submit">Search</button>
+        <button type="reset" id="clear-search" onclick="refreshUI()">Clear</button>
+      </fieldset>
+    </form>
+
+
+    <section id="past-sessions"></section>
+  </div>
+
+  <script type="text/javascript" src="dist/purify.min.js"></script>
+  <script src="app.js" defer></script>
+
+  <!-- Register the app's service worker -->
+
+  <!-- <script>
       if ("serviceWorker" in navigator) {
         navigator.serviceWorker.register("sw.js")
       }
     </script> -->
-  </body>
+</body>
+
 </html>

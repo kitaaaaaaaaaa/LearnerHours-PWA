@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Code adapted from PWP6 -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Registration</title>
+    <link rel="stylesheet" href="register-style.css">
+</head>
+
+<body class="figtree-400">
+    <h1>User Registration</h1>
+    <form id="registrationForm">
+        <fieldset>
+            <legend>Create an account</legend>
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username">
+            <div id="usernameError" class="error"></div>
+
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password">
+            <div id="passwordError" class="error"></div>
+
+            <label for="reenter-password">Reenter Password:</label>
+            <input type="password" id="reenter-password" name="password">
+            <div id="reenterPasswordError" class="error"></div>
+
+            <label for="phone">Phone Number:</label>
+            <input type="text" id="phone" name="phone">
+            <div id="phoneError" class="error"></div>
+
+            <button type="submit">Register</button>
+        </fieldset>
+    </form>
+
+    <script src="register.js"></script>
+    <!-- Changed from "../validation.js" -->
+</body>
+
+</html>
