@@ -22,11 +22,11 @@ let allSuburbs = [];
 const suburbsEl = document.getElementById("suburbs-list");
 
 fetch('au-suburbs.json') // Get a list of all valid suburbs
-.then(response => response.json())
-.then(data => {
-    allSuburbs = data.map(item => `${item.suburb} ${item.postcode} ${item.state}`); // Format it into an array
-    updateSuggestedSuburbs(stateTerritoryInputEl.value, suburbsEl); // Run the function when the page starts
-});
+    .then(response => response.json())
+    .then(data => {
+        allSuburbs = data.map(item => `${item.suburb} ${item.postcode} ${item.state}`); // Format it into an array
+        updateSuggestedSuburbs(stateTerritoryInputEl.value, suburbsEl); // Run the function when the page starts
+    });
 
 // Update suggestions if dropdown changes
 stateTerritoryInputEl.addEventListener("change", () => {
@@ -103,7 +103,7 @@ newSessionFormEl.addEventListener("submit", (event) => {
     // Prevent the form from submitting to the server
     // since everything is client-side.
     event.preventDefault();
-    
+
     // Get the start and end dates from the form.
     // Sanitise user input as an additional security step to prevent malicious code from being stored
     const date = DOMPurify.sanitise(dateInputEl.value);
@@ -112,16 +112,16 @@ newSessionFormEl.addEventListener("submit", (event) => {
     const stateTerritory = DOMPurify.sanitise(stateTerritoryInputEl.value);
     const startSuburb = DOMPurify.sanitise(startSuburbInputEl.value);
     const endSuburb = DOMPurify.sanitise(endSuburbInputEl.value);
-    
+
     hideAllErrors();
     // Check if the date is invalid
     if (checkDateInvalid(date, "date-error")) {
         // If the date is invalid, exit.
         invalid = true;
     }
-    
+
     // Check if the times are invalid
-    if (checkTimesInvalid("" , startTime, endTime, date, "start-time-error", "end-time-error")) {
+    if (checkTimesInvalid("", startTime, endTime, date, "start-time-error", "end-time-error")) {
         // If the times are invalid, exit.
         invalid = true;
     }
@@ -131,7 +131,7 @@ newSessionFormEl.addEventListener("submit", (event) => {
         // If the suburbs are invalid, exit.
         invalid = true;
     }
-    
+
     // If validation fails, do not store the session
     if (invalid) {
         return;
@@ -145,7 +145,7 @@ newSessionFormEl.addEventListener("submit", (event) => {
     newSessionFormEl.reset();
     hideSessionPopup();
     hideAllErrors();
-    
+
     // Refresh the UI.
     refreshUI();
 });
@@ -158,14 +158,14 @@ function checkDateInvalid(date, errorElementId) {
     const today = new Date().toLocaleDateString("en-CA");
 
     if (!date || date > today) {
-    newSessionFormEl.reset();
-    showError(errorElementId, "Date must be in the past");
-    // as date is invalid, we return true
-    return true;
+        newSessionFormEl.reset();
+        showError(errorElementId, "Date must be in the past");
+        // as date is invalid, we return true
+        return true;
     }
     // else
     return false;
-    }
+}
 
 function checkTimesInvalid(sessionId, startTime, endTime, date, startTimeErrorElementId, endTimeErrorElementId) {
     let invalid = false;
@@ -184,7 +184,7 @@ function checkTimesInvalid(sessionId, startTime, endTime, date, startTimeErrorEl
         showError(endTimeErrorElementId, "Session cannot be longer than 4 hours");
         invalid = true;
     }
-    
+
     // Check that the start and end times doesn't fall within an existing session
     const sessions = getAllStoredSessions()
     sessions.forEach((session) => {
@@ -196,9 +196,9 @@ function checkTimesInvalid(sessionId, startTime, endTime, date, startTimeErrorEl
                 showError(endTimeErrorElementId, "End time conflicts with existing session");
                 invalid = true;
             }
-        } 
+        }
     });
-    
+
     if (invalid) {
         newSessionFormEl.reset();
         return true;
@@ -299,7 +299,7 @@ function formatTime(timeString) {
     const [hour, minute] = timeString.split(':');
 
     // Convert hour from string to integer
-    intHour= parseInt(hour);
+    intHour = parseInt(hour);
 
     // Determine if AM or PM
     period = "AM";
@@ -395,8 +395,8 @@ function hideAllErrors() {
 function generateUniqueId() {
     const sessions = getAllStoredSessions();
     const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-    let uniqueId = characters[Math.floor(Math.random()*36)]+characters[Math.floor(Math.random()*36)]+characters[Math.floor(Math.random()*36)]+characters[Math.floor(Math.random()*36)]+"-"+characters[Math.floor(Math.random()*36)]+characters[Math.floor(Math.random()*36)]+characters[Math.floor(Math.random()*36)]+characters[Math.floor(Math.random()*36)];
-    
+    let uniqueId = characters[Math.floor(Math.random() * 36)] + characters[Math.floor(Math.random() * 36)] + characters[Math.floor(Math.random() * 36)] + characters[Math.floor(Math.random() * 36)] + "-" + characters[Math.floor(Math.random() * 36)] + characters[Math.floor(Math.random() * 36)] + characters[Math.floor(Math.random() * 36)] + characters[Math.floor(Math.random() * 36)];
+
     sessions.forEach((session) => {
         if (session.id === uniqueId) {
             uniqueId = generateUniqueId();
@@ -424,7 +424,7 @@ searchForm.addEventListener("submit", (event) => {
     }
 
     const sessions = getAllStoredSessions();
-    
+
     filteredSessions = sessions.filter((session) => {
         return session.date === date;
     });
@@ -443,7 +443,7 @@ searchForm.addEventListener("submit", (event) => {
 // -----------------------------
 // Render the past sessions on the page
 // -----------------------------
-function renderPastSessions(sessions) {    
+function renderPastSessions(sessions) {
     // Clear the list of past sessions, since we're going to re-render it.
     pastSessionContainer.textContent = "";
 
@@ -451,7 +451,7 @@ function renderPastSessions(sessions) {
     pastSessionHeader.textContent = "Past Sessions";
 
     const pastSessionList = document.createElement("ul");
-    
+
     // Exit if there are no sessions
     if (sessions.length === 0) {
         const noSessionsEl = document.createElement("div");
@@ -484,7 +484,7 @@ function renderPastSessions(sessions) {
                 deleteSession(session.sessionId);
             }
         });
-        
+
         // Attach an event listener for when users want to EDIT sessions
         editEl.addEventListener("click", (event) => {
             const editPopupEl = document.getElementById("edit-session-popup");
@@ -542,9 +542,9 @@ function renderPastSessions(sessions) {
 
                 hideAllErrors();
                 // Validate user inputs
-                if (checkDateInvalid(editedDate, "edit-date-error")) {invalid = true;};
-                if (checkTimesInvalid(sessionId, editedStartTime, editedEndTime, editedDate, "edit-start-time-error", "edit-end-time-error")) {invalid = true;};
-                if (checkSuburbsInvalid(editedStartSuburb, editedEndSuburb, "edit-start-suburb-error", "edit-end-suburb-error")) {invalid = true;};
+                if (checkDateInvalid(editedDate, "edit-date-error")) { invalid = true; };
+                if (checkTimesInvalid(sessionId, editedStartTime, editedEndTime, editedDate, "edit-start-time-error", "edit-end-time-error")) { invalid = true; };
+                if (checkSuburbsInvalid(editedStartSuburb, editedEndSuburb, "edit-start-suburb-error", "edit-end-suburb-error")) { invalid = true; };
 
                 if (invalid) {
                     return;
