@@ -1,4 +1,4 @@
-// create constants for the form and the form controls
+// Create constants for the form and the form controls
 const newSessionFormEl = document.getElementsByTagName("form")[0];
 
 const dateInputEl = document.getElementById("date");
@@ -12,34 +12,62 @@ const endSuburbInputEl = document.getElementById("end-suburb");
 const STORAGE_KEY = "learner-hours";
 const pastSessionContainer = document.getElementById("past-sessions");
 
+// Create constants for search elements
+const searchForm = document.getElementById("search-filter-form");
+
+// -----------------------------
+// Create autocomplete options for suburb input
+// -----------------------------
 let allSuburbs = [];
 const suburbsEl = document.getElementById("suburbs-list");
 
-// -----------------------------
-// Create autocomplete options for location input
-// -----------------------------
 fetch('au-suburbs.json') // Get a list of all valid suburbs
 .then(response => response.json())
 .then(data => {
     allSuburbs = data.map(item => `${item.suburb} ${item.postcode} ${item.state}`); // Format it into an array
-    updateSuggestedSuburbs(); // Run the function when the page starts
+    updateSuggestedSuburbs(stateTerritoryInputEl.value, suburbsEl); // Run the function when the page starts
 });
 
 // Update suggestions if dropdown changes
-stateTerritoryInputEl.addEventListener("change", updateSuggestedSuburbs);
+stateTerritoryInputEl.addEventListener("change", () => {
+    updateSuggestedSuburbs(stateTerritoryInputEl.value, suburbsEl)
+});
 
-function updateSuggestedSuburbs() {
-    filteredSuburbs = allSuburbs.filter(item => item.includes(stateTerritoryInputEl.value));
+function updateSuggestedSuburbs(value, datalist) {
+    filteredSuburbs = allSuburbs.filter(item => item.includes(value));
 
-    suburbsEl.replaceChildren(); // Remove existing datalist elements
+    datalist.replaceChildren(); // Remove existing datalist elements
 
     // Create datalist elements for each suburb in the JSON file
     filteredSuburbs.forEach(element => {
         const option = document.createElement("option");
         option.value = element;
-        suburbsEl.appendChild(option);
+        datalist.appendChild(option);
     });
 }
+
+// Update suggestions on the search element if it changes
+const searchSuburbInput = document.getElementById("search-suburb");
+const searchDateInput = document.getElementById("search-date")
+const searchSuburbsDatalist = document.getElementById("search-suburbs-list")
+
+searchSuburbInput.addEventListener("input", () => {
+    // Convert to lowercase to make search more lenient
+    const lowercaseSuburbs = allSuburbs.map(suburb => suburb.toLowerCase());
+    // Filter out the suburbs
+    const filteredSuburbs = lowercaseSuburbs.filter(item => item.includes(searchSuburbInput.value.toLowerCase()));
+    // Loop back through JSON file, and if a suburb matches one of the filtered suburbs, add it
+    const displaySuburbs = allSuburbs.filter(suburb => filteredSuburbs.includes(suburb.toLowerCase()));
+
+    searchSuburbsDatalist.replaceChildren(); // Remove existing datalist elements
+
+    // Create datalist elements for each suburb in the JSON file
+    displaySuburbs.forEach(element => {
+        const option = document.createElement("option");
+        option.value = element;
+        searchSuburbsDatalist.appendChild(option);
+    });
+});
 
 // -----------------------------
 // Handle showing/hiding the popup to ADD a new session
@@ -49,7 +77,7 @@ const popupBtn = document.getElementById("add-session-btn");
 const cancelPopupBtn = document.getElementById('cancel-add-session')
 
 function showSessionPopup() {
-    updateSuggestedSuburbs();
+    updateSuggestedSuburbs(stateTerritoryInputEl.value, suburbsEl);
     popupEl.classList.remove("hidden");
 }
 
@@ -112,7 +140,6 @@ newSessionFormEl.addEventListener("submit", (event) => {
     sessionId = generateUniqueId();
     storeNewSession(sessionId, date, startTime, endTime, stateTerritory, startSuburb, endSuburb);
 
-    
     // Reset and hide the form
     newSessionFormEl.reset();
     hideSessionPopup();
@@ -250,159 +277,8 @@ function deleteSession(sessionId) {
     refreshUI();
 }
 
-// -----------------------------
-// Render the past sessions on the page
-// -----------------------------
-function renderPastSessions() {
-    // get the parsed string of sessions, or an empty array.
-    const sessions = getAllStoredSessions();
-    
-    // Clear the list of past sessions, since we're going to re-render it.
-    pastSessionContainer.textContent = "";
-
-    // exit if there are no sessions
-    if (sessions.length === 0) {
-        return;
-    }
-
-
-    const pastSessionHeader = document.createElement("h2");
-    pastSessionHeader.textContent = "Past Sessions";
-
-    const pastSessionList = document.createElement("ul");
-
-    // Loop over all sessions and render them with additional elements for editing
-    sessions.forEach((session) => {
-        const sessionEl = document.createElement("li");
-
-        // Create an edit button for each session
-        const editEl = document.createElement("button");
-        editEl.textContent = "Edit";
-
-        // Create a delete button for each session
-        const deleteEl = document.createElement("button");
-        deleteEl.textContent = "Delete";
-
-        // Attach an event listener for when users want to DELETE sessions
-        deleteEl.addEventListener("click", () => {
-            const confirmation = confirm("Are you sure you want to delete this session?");
-            if (confirmation) {
-                deleteSession(session.sessionId);
-            }
-        });
-        
-        // Attach an event listener for when users want to EDIT sessions
-        editEl.addEventListener("click", (event) => {
-            const editPopupEl = document.getElementById("edit-session-popup");
-            const cancelEditPopupBtn = document.getElementById("cancel-edit-session");
-
-            // Manage showing/hiding the popup
-            editPopupEl.classList.remove("hidden");
-            cancelEditPopupBtn.addEventListener("click", () => {
-                editPopupEl.classList.add("hidden");
-                editSessionFormEl.removeEventListener("submit", onEditSessionFormSubmit);
-            });
-
-            // Declare form elements to manipulate
-            const editDateInputEl = document.getElementById("edit-date");
-            const editStartTimeInputEl = document.getElementById("edit-start-time");
-            const editEndTimeInputEl = document.getElementById("edit-end-time");
-            const editStateTerritoryInputEl = document.getElementById("edit-state-territory");
-            const editStartSuburbInputEl = document.getElementById("edit-start-suburb");
-            const editEndSuburbInputEl = document.getElementById("edit-end-suburb");
-            const editSuburbsEl = document.getElementById("edit-suburbs-list")
-
-            // Populate form fields with the session data
-            editDateInputEl.value = session.date;
-            editStartTimeInputEl.value = session.startTime;
-            editEndTimeInputEl.value = session.endTime;
-            editStateTerritoryInputEl.value = session.stateTerritory;
-            editStartSuburbInputEl.value = session.startSuburb;
-            editEndSuburbInputEl.value = session.endSuburb;
-
-            // Update suggestions if dropdown changes
-            updateSuggestedEditSuburbs();
-            editStateTerritoryInputEl.addEventListener("change", updateSuggestedEditSuburbs)
-
-            function updateSuggestedEditSuburbs() {
-                filteredSuburbs = allSuburbs.filter(item => item.includes(editStateTerritoryInputEl.value));
-
-                editSuburbsEl.replaceChildren(); // Remove existing datalist elements
-
-                // Create datalist elements for each suburb in the JSON file
-                filteredSuburbs.forEach(element => {
-                    const option = document.createElement("option");
-                    option.value = element;
-                    editSuburbsEl.appendChild(option);
-                });
-            }
-
-            // Listen to form submissions
-            const editSessionFormEl = document.getElementById("edit-session-form");
-
-            editSessionFormEl.addEventListener("submit", onEditSessionFormSubmit);
-
-            function onEditSessionFormSubmit(event) {
-                event.preventDefault();
-
-                let invalid = false;
-
-                const editedDate = editDateInputEl.value;
-                const editedStartTime = editStartTimeInputEl.value;
-                const editedEndTime = editEndTimeInputEl.value;
-                const editedStateTerritory = editStateTerritoryInputEl.value;
-                const editedStartSuburb = editStartSuburbInputEl.value;
-                const editedEndSuburb = editEndSuburbInputEl.value;
-                const sessionId = session.sessionId;
-
-                hideAllErrors();
-                // Validate user inputs
-                if (checkDateInvalid(editedDate, "edit-date-error")) {invalid = true;};
-                if (checkTimesInvalid(sessionId, editedStartTime, editedEndTime, editedDate, "edit-start-time-error", "edit-end-time-error")) {invalid = true;};
-                if (checkSuburbsInvalid(editedStartSuburb, editedEndSuburb, "edit-start-suburb-error", "edit-end-suburb-error")) {invalid = true;};
-
-                if (invalid) {
-                    return;
-                }
-
-                // Store the edited session in client-side storage
-                session.date = editedDate;
-                session.startTime = editedStartTime;
-                session.endTime = editedEndTime;
-                session.stateTerritory = editedStateTerritory;
-                session.startSuburb = editedStartSuburb;
-                session.endSuburb = editedEndSuburb;
-
-                storeEditedSessionArray(sessions);
-
-                // Refresh the UI
-                refreshUI();
-
-                // Reset and hide the form
-                editSessionFormEl.reset();
-                editPopupEl.classList.add("hidden");
-                hideAllErrors();
-                editSessionFormEl.removeEventListener("submit", onEditSessionFormSubmit);
-            }
-        });
-
-        // Set the display format for the past sessions in main UI
-        sessionEl.textContent = `${formatDate(session.date)}
-        from ${formatTime(session.startTime,)} to ${formatTime(session.endTime)} |
-        ${session.startSuburb} to ${session.endSuburb}
-        | Duration - ${timeDifference(session.startTime, session.endTime)}`;
-
-        sessionEl.appendChild(editEl);
-        sessionEl.appendChild(deleteEl);
-        pastSessionList.appendChild(sessionEl);
-    });
-
-    pastSessionContainer.appendChild(pastSessionHeader);
-    pastSessionContainer.appendChild(pastSessionList);
-}
-
 function refreshUI() {
-    renderPastSessions();
+    renderPastSessions(getAllStoredSessions());
     renderTotalHoursLogged();
     renderTotalTrips();
 }
@@ -527,6 +403,187 @@ function generateUniqueId() {
     })
 
     return uniqueId;
+}
+
+// -----------------------------
+// Allow the user to search for specific sessions
+// -----------------------------
+function sanitiseInput(input) {
+
+}
+
+
+searchForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    const date = searchDateInput.value
+    const suburb = searchSuburbInput.value
+
+    // If search inputs are empty, render the sessions as normal
+    if (date === '' && suburb === '') {
+        refreshUI();
+        return;
+    }
+
+    const sessions = getAllStoredSessions();
+    
+    filteredSessions = sessions.filter((session) => {
+        return session.date === date;
+    });
+
+    filteredSessions = sessions.filter((session) => {
+        return session.startSuburb === suburb || session.endSuburb === suburb;
+    });
+
+    renderPastSessions(filteredSessions);
+    renderTotalHoursLogged();
+    renderTotalTrips();
+
+    searchForm.reset();
+})
+
+// -----------------------------
+// Render the past sessions on the page
+// -----------------------------
+function renderPastSessions(sessions) {    
+    // Clear the list of past sessions, since we're going to re-render it.
+    pastSessionContainer.textContent = "";
+
+    const pastSessionHeader = document.createElement("h2");
+    pastSessionHeader.textContent = "Past Sessions";
+
+    const pastSessionList = document.createElement("ul");
+    
+    // Exit if there are no sessions
+    if (sessions.length === 0) {
+        const noSessionsEl = document.createElement("div");
+        noSessionsEl.id = "no-sessions-alert"
+        noSessionsEl.textContent = "No sessions found"
+
+        pastSessionContainer.appendChild(pastSessionHeader);
+        pastSessionContainer.appendChild(noSessionsEl);
+        return;
+    }
+
+
+
+    // Loop over all sessions and render them with additional elements for editing
+    sessions.forEach((session) => {
+        const sessionEl = document.createElement("li");
+
+        // Create an edit button for each session
+        const editEl = document.createElement("button");
+        editEl.textContent = "Edit";
+
+        // Create a delete button for each session
+        const deleteEl = document.createElement("button");
+        deleteEl.textContent = "Delete";
+
+        // Attach an event listener for when users want to DELETE sessions
+        deleteEl.addEventListener("click", () => {
+            const confirmation = confirm("Are you sure you want to delete this session?");
+            if (confirmation) {
+                deleteSession(session.sessionId);
+            }
+        });
+        
+        // Attach an event listener for when users want to EDIT sessions
+        editEl.addEventListener("click", (event) => {
+            const editPopupEl = document.getElementById("edit-session-popup");
+            const cancelEditPopupBtn = document.getElementById("cancel-edit-session");
+
+            // Manage showing/hiding the popup
+            editPopupEl.classList.remove("hidden");
+            cancelEditPopupBtn.addEventListener("click", () => {
+                editPopupEl.classList.add("hidden");
+                editSessionFormEl.removeEventListener("submit", onEditSessionFormSubmit);
+            });
+
+            // Declare form elements to manipulate
+            const editDateInputEl = document.getElementById("edit-date");
+            const editStartTimeInputEl = document.getElementById("edit-start-time");
+            const editEndTimeInputEl = document.getElementById("edit-end-time");
+            const editStateTerritoryInputEl = document.getElementById("edit-state-territory");
+            const editStartSuburbInputEl = document.getElementById("edit-start-suburb");
+            const editEndSuburbInputEl = document.getElementById("edit-end-suburb");
+            const editSuburbsEl = document.getElementById("edit-suburbs-list")
+
+            // Populate form fields with the session data
+            editDateInputEl.value = session.date;
+            editStartTimeInputEl.value = session.startTime;
+            editEndTimeInputEl.value = session.endTime;
+            editStateTerritoryInputEl.value = session.stateTerritory;
+            editStartSuburbInputEl.value = session.startSuburb;
+            editEndSuburbInputEl.value = session.endSuburb;
+
+            // Update suggestions if dropdown changes
+            updateSuggestedSuburbs(editStateTerritoryInputEl.value, editSuburbsEl);
+            editStateTerritoryInputEl.addEventListener("change", () => {
+                updateSuggestedSuburbs(editStateTerritoryInputEl.value, editSuburbsEl);
+            })
+
+            // Listen to form submissions
+            const editSessionFormEl = document.getElementById("edit-session-form");
+
+            editSessionFormEl.addEventListener("submit", onEditSessionFormSubmit);
+
+            function onEditSessionFormSubmit(event) {
+                event.preventDefault();
+
+                let invalid = false;
+
+                const editedDate = editDateInputEl.value;
+                const editedStartTime = editStartTimeInputEl.value;
+                const editedEndTime = editEndTimeInputEl.value;
+                const editedStateTerritory = editStateTerritoryInputEl.value;
+                const editedStartSuburb = editStartSuburbInputEl.value;
+                const editedEndSuburb = editEndSuburbInputEl.value;
+                const sessionId = session.sessionId;
+
+                hideAllErrors();
+                // Validate user inputs
+                if (checkDateInvalid(editedDate, "edit-date-error")) {invalid = true;};
+                if (checkTimesInvalid(sessionId, editedStartTime, editedEndTime, editedDate, "edit-start-time-error", "edit-end-time-error")) {invalid = true;};
+                if (checkSuburbsInvalid(editedStartSuburb, editedEndSuburb, "edit-start-suburb-error", "edit-end-suburb-error")) {invalid = true;};
+
+                if (invalid) {
+                    return;
+                }
+
+                // Store the edited session in client-side storage
+                session.date = editedDate;
+                session.startTime = editedStartTime;
+                session.endTime = editedEndTime;
+                session.stateTerritory = editedStateTerritory;
+                session.startSuburb = editedStartSuburb;
+                session.endSuburb = editedEndSuburb;
+
+                storeEditedSessionArray(sessions);
+
+                // Refresh the UI
+                refreshUI();
+
+                // Reset and hide the form
+                editSessionFormEl.reset();
+                editPopupEl.classList.add("hidden");
+                hideAllErrors();
+                editSessionFormEl.removeEventListener("submit", onEditSessionFormSubmit);
+            }
+        });
+
+        // Set the display format for the past sessions in main UI
+        sessionEl.textContent = `${formatDate(session.date)}
+        from ${formatTime(session.startTime,)} to ${formatTime(session.endTime)} |
+        ${session.startSuburb} to ${session.endSuburb}
+        | Duration - ${timeDifference(session.startTime, session.endTime)}`;
+
+        sessionEl.appendChild(editEl);
+        sessionEl.appendChild(deleteEl);
+        pastSessionList.appendChild(sessionEl);
+    });
+
+    pastSessionContainer.appendChild(pastSessionHeader);
+    pastSessionContainer.appendChild(pastSessionList);
 }
 
 refreshUI();
