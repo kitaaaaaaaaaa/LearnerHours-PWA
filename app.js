@@ -105,12 +105,13 @@ newSessionFormEl.addEventListener("submit", (event) => {
     event.preventDefault();
     
     // Get the start and end dates from the form.
-    const date = dateInputEl.value;
-    const startTime = startTimeInputEl.value;
-    const endTime = endTimeInputEl.value;
-    const stateTerritory = stateTerritoryInputEl.value;
-    const startSuburb = startSuburbInputEl.value;
-    const endSuburb = endSuburbInputEl.value;
+    // Sanitise user input as an additional security step to prevent malicious code from being stored
+    const date = DOMPurify.sanitise(dateInputEl.value);
+    const startTime = DOMPurify.sanitise(startTimeInputEl.value);
+    const endTime = DOMPurify.sanitise(endTimeInputEl.value);
+    const stateTerritory = DOMPurify.sanitise(stateTerritoryInputEl.value);
+    const startSuburb = DOMPurify.sanitise(startSuburbInputEl.value);
+    const endSuburb = DOMPurify.sanitise(endSuburbInputEl.value);
     
     hideAllErrors();
     // Check if the date is invalid
@@ -408,16 +409,13 @@ function generateUniqueId() {
 // -----------------------------
 // Allow the user to search for specific sessions
 // -----------------------------
-function sanitiseInput(input) {
-
-}
-
-
 searchForm.addEventListener("submit", (event) => {
     event.preventDefault();
 
-    const date = searchDateInput.value
-    const suburb = searchSuburbInput.value
+    // Sanitise the user inputs before working with them (even if it is not rendered to the DOM)
+    // Just in case if users find an exploit
+    const date = DOMPurify.sanitize(searchDateInput.value)
+    const suburb = DOMPurify.sanitize(searchSuburbInput.value)
 
     // If search inputs are empty, render the sessions as normal
     if (date === '' && suburb === '') {
@@ -532,12 +530,14 @@ function renderPastSessions(sessions) {
 
                 let invalid = false;
 
-                const editedDate = editDateInputEl.value;
-                const editedStartTime = editStartTimeInputEl.value;
-                const editedEndTime = editEndTimeInputEl.value;
-                const editedStateTerritory = editStateTerritoryInputEl.value;
-                const editedStartSuburb = editStartSuburbInputEl.value;
-                const editedEndSuburb = editEndSuburbInputEl.value;
+                // Get the user inputs from the form
+                // Sanitise them as an additional security step to prevent malicious code from being stored
+                const editedDate = DOMPurify.sanitise(editDateInputEl.value);
+                const editedStartTime = DOMPurify.sanitise(editStartTimeInputEl.value);
+                const editedEndTime = DOMPurify.sanitise(editEndTimeInputEl.value);
+                const editedStateTerritory = DOMPurify.sanitise(editStateTerritoryInputEl.value);
+                const editedStartSuburb = DOMPurify.sanitise(editStartSuburbInputEl.value);
+                const editedEndSuburb = DOMPurify.sanitise(editEndSuburbInputEl.value);
                 const sessionId = session.sessionId;
 
                 hideAllErrors();
@@ -572,6 +572,7 @@ function renderPastSessions(sessions) {
         });
 
         // Set the display format for the past sessions in main UI
+        // Use textContent, which uses output encoding
         sessionEl.textContent = `${formatDate(session.date)}
         from ${formatTime(session.startTime,)} to ${formatTime(session.endTime)} |
         ${session.startSuburb} to ${session.endSuburb}
