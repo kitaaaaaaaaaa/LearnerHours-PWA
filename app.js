@@ -436,8 +436,7 @@ function hideAllErrors() {
 // Function to generate unique IDs for sessions
 function generateUniqueId() {
     const sessions = getAllStoredSessions();
-    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-    let uniqueId = characters[Math.floor(Math.random() * 36)] + characters[Math.floor(Math.random() * 36)] + characters[Math.floor(Math.random() * 36)] + characters[Math.floor(Math.random() * 36)] + "-" + characters[Math.floor(Math.random() * 36)] + characters[Math.floor(Math.random() * 36)] + characters[Math.floor(Math.random() * 36)] + characters[Math.floor(Math.random() * 36)];
+    let uniqueId = SimpleCrypto.generateRandom();
 
     sessions.forEach((session) => {
         if (session.id === uniqueId) {
