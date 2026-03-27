@@ -22,7 +22,12 @@ fieldset, legend {
 
 fieldset {
     min-height: 10rem;
+    min-width: 20rem;
     max-width: 30rem;
+}
+
+#loginForm fieldset {
+    min-height: 5rem;
 }
 
 fieldset .error {

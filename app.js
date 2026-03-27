@@ -15,6 +15,42 @@ const pastSessionContainer = document.getElementById("past-sessions");
 // Create constants for search elements
 const searchForm = document.getElementById("search-filter-form");
 
+// Initialise encryption library
+const SECRET_KEY = "learner-hours";
+const simpleCrypto = new SimpleCrypto(SECRET_KEY)
+
+// -----------------------------
+// Check if the session is expired
+// -----------------------------
+
+// Decrypt session expiry
+try {
+    const expiry = simpleCrypto.decrypt(getSessionExpiry())
+    
+    // Check if session is expired or if there is no session information
+    if (new Date() > expiry || expiry === "") {
+        // Delete the session information
+        window.sessionStorage.removeItem("session-info")
+
+        window.location.replace("reigster.html")
+    }
+} catch(error) {
+    // If decryption fails because there is no session expiry, handle errors gracefully
+    window.location.replace("register.html")
+}
+
+
+function getSessionExpiry() {
+    // Get the user data from localStorage
+    const data = window.sessionStorage.getItem("session-info");
+
+    // If no data was stored, default to an empty string
+    // otherwise, return the stored data as parsed JSON
+    const expiry = data ? JSON.parse(data) : "";
+
+    return expiry;
+}
+
 // -----------------------------
 // Create autocomplete options for suburb input
 // -----------------------------

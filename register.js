@@ -1,6 +1,10 @@
 // Code adapted from PWP6
 const STORAGE_KEY = "user-information";
-const bcrypt = require('bcrypt');
+const bcrypt = dcodeIO.bcrypt;
+
+// Initialise encryption library
+const SECRET_KEY = "learner-hours";
+const simpleCrypto = new SimpleCrypto(SECRET_KEY)
 
 document.getElementById("registrationForm").addEventListener("submit", (event) => { 
     event.preventDefault(); // Prevent form submission 
@@ -51,7 +55,7 @@ document.getElementById("registrationForm").addEventListener("submit", (event) =
 
     // Check if there is already an account on the device
     if (getCredentials().length !== 0) {
-        // DISPLAY AN ERROR MESSAGE HERE
+        showError("formError", "There is already an account on this device")
         isValid = false;
     }
 
@@ -59,16 +63,50 @@ document.getElementById("registrationForm").addEventListener("submit", (event) =
     if (isValid) { 
         alert("Registration successful!"); 
         
+        const credentials = getCredentials();
+
         // Hash the password before storing it
-        // const passwordHash = bcrypt.hashSync(password, 12)
+        const passwordHash = bcrypt.hashSync(password, 12)
 
         // Add the new user data to the user info array
-        // sessions.push({username, passwordHash, phone});
+        // It is stored as an array to allow length checking easier
+        credentials.push({username, passwordHash, phone});
 
         // Store the array back in the storage.
-        // window.localStorage.setItem(STORAGE_KEY, JSON.stringify(sessions));
+        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(credentials));
+
+        // Store session expiry into sessionStorage as an encrypted value
+        // to help prevent tampering. Ideally the secret key is 
+        // kept secret on a backend server, but cannot be done within the
+        // constraints of this project
+        const plainData = generateExpiryTime();
+        const cipherData = simpleCrypto.encrypt(plainData);
+        window.sessionStorage.setItem("session-info", JSON.stringify(cipherData));
     } 
 });
+
+function generateExpiryTime() {
+    let currentDate = new Date();
+
+    // Get the current minutes of the date
+    let currentMinutes = currentDate.getMinutes();
+
+    // Add 30 minutes
+    currentDate.setMinutes(currentMinutes + 30);
+
+    return currentDate;
+}
+
+function getSessionExpiry() {
+    // Get the user data from localStorage
+    const data = window.sessionStorage.getItem("session-info");
+
+    // If no data was stored, default to an empty string
+    // otherwise, return the stored data as parsed JSON
+    const expiry = data ? JSON.parse(data) : "";
+
+    return expiry;
+}
 
 function getCredentials() {
     // Get the user data from localStorage

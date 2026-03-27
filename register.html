@@ -30,12 +30,30 @@
             <input type="text" id="phone" name="phone">
             <div id="phoneError" class="error"></div>
 
+            <div id="formError" class="error"></div>
             <button type="submit">Register</button>
         </fieldset>
     </form>
 
+    <form id="loginForm">
+        <fieldset>
+            <legend>Log in</legend>
+            <label for="login-username">Username:</label>
+            <input type="text" id="login-username" name="username">
+            <div id="login-usernameError" class="error"></div>
+
+            <label for="login-password">Password:</label>
+            <input type="password" id="login-password" name="password">
+            <div id="login-passwordError" class="error"></div>
+
+            <div id="login-formError" class="error"></div>
+            <button type="submit">Log in</button>
+        </fieldset>
+    </form>
+
+    <script src="https://cdn.jsdelivr.net/npm/simple-crypto-js@2.5.0/dist/SimpleCrypto.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bcryptjs/2.4.3/bcrypt.min.js"></script>
     <script src="register.js"></script>
-    <!-- Changed from "../validation.js" -->
 </body>
 
 </html>
