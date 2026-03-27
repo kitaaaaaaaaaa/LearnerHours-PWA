@@ -49,7 +49,7 @@ registerForm.addEventListener("submit", async (event) => {
     } 
 
     // Validate Password (min 12 characters, at least one letter, one number and one special character) 
-    const passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+-=])[A-Za-z\d!@#$%^&*()_+-=]{12,}$/; 
+    const passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=])[A-Za-z\d!@#$%^&*()_+\-=]{12,}$/; 
 
     if (!passwordPattern.test(password)) { 
         showError("passwordError", "Password must be at least 12 characters long, contain letters, numbers and special characters such as !@#$%^&*()_+-="); 
