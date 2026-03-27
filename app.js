@@ -22,23 +22,29 @@ const simpleCrypto = new SimpleCrypto(SECRET_KEY)
 // -----------------------------
 // Check if the session is expired
 // -----------------------------
+checkSessionExpired();
 
-// Decrypt session expiry
-try {
-    const expiry = simpleCrypto.decrypt(getSessionExpiry())
-    
-    // Check if session is expired or if there is no session information
-    if (new Date() > expiry || expiry === "") {
-        // Delete the session information
-        window.sessionStorage.removeItem("session-info")
+async function checkSessionExpired() {
+    try {
+        // Decrypt session expiry
+        const expiry = await simpleCrypto.decrypt(getSessionExpiry())
+        
+        // Check if session is expired or if there is no session information
+        if (new Date() > expiry || expiry === "") {
+            // Delete the session information
+            window.sessionStorage.removeItem("session-info")
 
-        window.location.replace("reigster.html")
+            // Redirect user to the login page
+            window.location.replace("reigster.html")
+        }
+    } catch(error) {
+        // If decryption fails because there is no session expiry, handle errors gracefully
+        window.location.replace("register.html")
     }
-} catch(error) {
-    // If decryption fails because there is no session expiry, handle errors gracefully
-    window.location.replace("register.html")
 }
 
+// Check if the session is expired every 10 minutes
+setInterval(checkSessionExpired, 600000)
 
 function getSessionExpiry() {
     // Get the user data from localStorage

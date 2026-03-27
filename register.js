@@ -6,9 +6,29 @@ const bcrypt = dcodeIO.bcrypt;
 const SECRET_KEY = "learner-hours";
 const simpleCrypto = new SimpleCrypto(SECRET_KEY)
 
-document.getElementById("registrationForm").addEventListener("submit", (event) => { 
-    event.preventDefault(); // Prevent form submission 
+// Create constants for the form
+const registerForm = document.getElementById("registrationForm");
+const loginForm = document.getElementById("loginForm")
 
+// -----------------------------
+// Display correct UI based on if there is already an account
+// -----------------------------
+if (getCredentials().length !== 0) {
+    registerForm.classList.add("hidden");
+    loginForm.classList.remove("hidden");
+} else {
+    registerForm.classList.remove("hidden");
+    loginForm.classList.add("hidden");
+}
+
+// -----------------------------
+// Listen to registration form submissions
+// -----------------------------
+registerForm.addEventListener("submit", async (event) => { 
+    event.preventDefault(); // Prevent form submission 
+    
+    // Show a loading screen since the operation may take some time
+    showLoading();
     
     // Clear previous error messages 
     clearErrors(); 
@@ -19,17 +39,14 @@ document.getElementById("registrationForm").addEventListener("submit", (event) =
     const phone = document.getElementById("phone").value;
     const reenteredPassword = document.getElementById("reenter-password").value; 
 
-
     // Track if the form is valid 
     let isValid = true; 
-
 
     // Validate Username 
     if (username === "") {  // If username is blank 
         showError("usernameError", "Username is required"); 
         isValid = false; 
     } 
-
 
     // Validate Password (min 12 characters, at least one letter, one number and one special character) 
     const passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+-=])[A-Za-z\d!@#$%^&*()_+-=]{12,}$/; 
@@ -61,12 +78,10 @@ document.getElementById("registrationForm").addEventListener("submit", (event) =
 
     // If the form is valid, submit it or show a success message 
     if (isValid) { 
-        alert("Registration successful!"); 
-        
         const credentials = getCredentials();
 
         // Hash the password before storing it
-        const passwordHash = bcrypt.hashSync(password, 12)
+        const passwordHash = await bcrypt.hashSync(password, 12);
 
         // Add the new user data to the user info array
         // It is stored as an array to allow length checking easier
@@ -82,8 +97,77 @@ document.getElementById("registrationForm").addEventListener("submit", (event) =
         const plainData = generateExpiryTime();
         const cipherData = simpleCrypto.encrypt(plainData);
         window.sessionStorage.setItem("session-info", JSON.stringify(cipherData));
+
+        // Redirect the user to the main page and reset UI
+        window.location.replace("index.html");
     } 
+    hideLoading();
 });
+
+// -----------------------------
+// Listen to login form submissions
+// -----------------------------
+loginForm.addEventListener("submit", async (event) => {
+    event.preventDefault(); // Prevent form submission
+    showLoading(); // Show a loading screen since the operation may take some time
+
+    clearErrors(); // Clear any error messages
+
+    // Get form field values
+    const username = document.getElementById("login-username").value;
+    const password = document.getElementById("login-password").value;
+
+    // Track if the form is valid
+    let isValid = true;
+
+    // Validate username
+    if (username === "") {
+        showError("login-usernameError", "Username is required");
+        isValid = false;
+    }
+
+    // Validate password
+    if (password === "") {
+        showError("login-passwordError", "Password is required")
+        isValid = false;
+    }
+
+    // Check if the username matches with the stored credentials
+    if (username !== getCredentials()[0].username) {
+        showError("login-usernameError", "Incorrect username")
+        isValid = false;
+    }
+
+    // Check if the password matches with the stored credentials
+    if (!await bcrypt.compare(password, getCredentials()[0].passwordHash)) {
+        showError("login-passwordError", "Incorrect password")
+        isValid = false;
+    }
+
+    // If everything is valid and correct, 
+    if (isValid) {
+        // Store session expiry into sessionStorage as an encrypted value to help prevent tampering.
+        const plainData = generateExpiryTime();
+        const cipherData = simpleCrypto.encrypt(plainData);
+        window.sessionStorage.setItem("session-info", JSON.stringify(cipherData));
+
+        // Redirect the user to the main page
+        window.location.replace("index.html")
+    }
+    hideLoading();
+});
+
+
+// -----------------------------
+// Define other functions
+// -----------------------------
+function showLoading() {
+    document.getElementById("loading-screen").classList.remove("hidden");
+}
+
+function hideLoading() {
+    document.getElementById("loading-screen").classList.add("hidden");
+}
 
 function generateExpiryTime() {
     let currentDate = new Date();

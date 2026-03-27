@@ -5,12 +5,14 @@
     <!-- Code adapted from PWP6 -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Registration</title>
+    <title>Learner Driving Hours</title>
     <link rel="stylesheet" href="register-style.css">
+    <link rel="icon" href="icons/icon2.jpg">
+    <link rel="manifest" href="LearnerHours.json">
 </head>
 
 <body class="figtree-400">
-    <h1>User Registration</h1>
+    <h1>Register/Login</h1>
     <form id="registrationForm">
         <fieldset>
             <legend>Create an account</legend>
@@ -37,7 +39,7 @@
 
     <form id="loginForm">
         <fieldset>
-            <legend>Log in</legend>
+            <legend>Sign into your account</legend>
             <label for="login-username">Username:</label>
             <input type="text" id="login-username" name="username">
             <div id="login-usernameError" class="error"></div>
@@ -50,6 +52,12 @@
             <button type="submit">Log in</button>
         </fieldset>
     </form>
+
+    <div class="popup-container loading hidden" id="loading-screen">
+        <video src="anim/loading.webm" autoplay loop muted>
+            Loading...
+        </video>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/simple-crypto-js@2.5.0/dist/SimpleCrypto.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bcryptjs/2.4.3/bcrypt.min.js"></script>
