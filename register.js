@@ -169,6 +169,7 @@ function hideLoading() {
     document.getElementById("loading-screen").classList.add("hidden");
 }
 
+// Function to generate an expiry time 30 minutes from now, in UTC time
 function generateExpiryTime() {
     let currentDate = new Date();
 

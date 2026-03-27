@@ -30,12 +30,12 @@ async function checkSessionExpired() {
         const expiry = await simpleCrypto.decrypt(getSessionExpiry())
 
         // Check if session is expired or if there is no session information
-        if (new Date() > expiry || expiry === "") {
+        if (new Date().toISOString() > expiry || expiry === "") {
             // Delete the session information
             window.sessionStorage.removeItem("session-info")
 
             // Redirect user to the login page
-            window.location.replace("reigster.html")
+            window.location.replace("register.html")
         }
     } catch (error) {
         // If decryption fails because there is no session expiry, handle errors gracefully
@@ -197,6 +197,9 @@ newSessionFormEl.addEventListener("submit", (event) => {
 
     // Refresh the UI.
     refreshUI();
+
+    // Show a confirmation message
+    showConfirmation("Entry successfully saved", "Your new entry has been saved to your personal database");
 });
 
 // -----------------------------
@@ -470,7 +473,7 @@ function hideAllErrors() {
 // Function to generate unique IDs for sessions
 function generateUniqueId() {
     const sessions = getAllStoredSessions();
-    let uniqueId = simpleCrypto.generateRandom();
+    let uniqueId = SimpleCrypto.generateRandom();
 
     sessions.forEach((session) => {
         if (session.id === uniqueId) {
@@ -684,6 +687,9 @@ function renderPastSessions(sessions) {
                 editPopupEl.classList.add("hidden");
                 hideAllErrors();
                 editSessionFormEl.removeEventListener("submit", onEditSessionFormSubmit);
+
+                // Show confirmation message
+                showConfirmation("Entry successfully edited", "Your entry has been updated and is stored in your personal database");
             }
         });
 
