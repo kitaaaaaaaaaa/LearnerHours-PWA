@@ -208,7 +208,7 @@ function checkDuplicateSession(currentSession, sessionId) {
 
     sessions.forEach((session) => {
         let tempSession = session;
-        
+
         // If every property is the exact same,
         // and the session id is different, it is a duplicate session
         if (
@@ -470,7 +470,7 @@ function hideAllErrors() {
 // Function to generate unique IDs for sessions
 function generateUniqueId() {
     const sessions = getAllStoredSessions();
-    let uniqueId = SimpleCrypto.generateRandom();
+    let uniqueId = simpleCrypto.generateRandom();
 
     sessions.forEach((session) => {
         if (session.id === uniqueId) {
@@ -480,6 +480,39 @@ function generateUniqueId() {
 
     return uniqueId;
 }
+
+function showConfirmation(heading, description) {
+    const confirmation = document.getElementById("confirmation")
+    confirmation.textContent = ''; // Clear any existing messages
+
+    // Show the confirmation box
+    const container = document.getElementById("confirmation-message")
+    container.classList.remove("hidden");
+
+    // Create a heading
+    const title = document.createElement("h3");
+    title.textContent = heading;
+
+    // Create a description
+    const text = document.createElement("p");
+    text.textContent = description;
+
+    // Create a close button
+    const closeButton = document.createElement("button");
+    closeButton.id = "close-confirmation";
+    closeButton.textContent = "Close";
+
+    // Add them all to the HTML element
+    confirmation.appendChild(title)
+    confirmation.appendChild(text)
+    confirmation.appendChild(closeButton)
+
+    // Attach an event listener for the close button
+    closeButton.addEventListener("click", () => {
+        container.classList.add("hidden");
+    });
+}
+
 
 // -----------------------------
 // Allow the user to search for specific sessions
@@ -494,6 +527,10 @@ searchForm.addEventListener("submit", (event) => {
 
     // If search inputs are empty, render the sessions as normal
     if (date === '' && suburb === '') {
+        showError("search-error", "Invalid search query");
+        setTimeout(() => {
+            document.getElementById("search-error").classList.add("hidden")
+        }, 2 * 1000);
         refreshUI();
         return;
     }
@@ -620,8 +657,8 @@ function renderPastSessions(sessions) {
                 if (checkDateInvalid(editedDate, "edit-date-error")) { invalid = true; };
                 if (checkTimesInvalid(sessionId, editedStartTime, editedEndTime, editedDate, "edit-start-time-error", "edit-end-time-error")) { invalid = true; };
                 if (checkSuburbsInvalid(editedStartSuburb, editedEndSuburb, "edit-start-suburb-error", "edit-end-suburb-error")) { invalid = true; };
-                if (checkDuplicateSession({ date: editedDate, startTime: editedStartTime, endTime: editedEndTime, stateTerritory: editedStateTerritory, startSuburb: editedStartSuburb, endSuburb: editedEndSuburb }, sessionId)) { 
-                    invalid = true; 
+                if (checkDuplicateSession({ date: editedDate, startTime: editedStartTime, endTime: editedEndTime, stateTerritory: editedStateTerritory, startSuburb: editedStartSuburb, endSuburb: editedEndSuburb }, sessionId)) {
+                    invalid = true;
                     showError("edit-end-suburb-error", "A duplicate entry already exists");
                 };
 

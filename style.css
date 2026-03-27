@@ -139,7 +139,6 @@ li:nth-of-type(even) {
     }
 }
 
-
 #no-sessions-alert {
     text-align: center;
     margin-top: 2rem;
@@ -151,6 +150,14 @@ li:nth-of-type(even) {
     background-color: #f5f3ef;
 
     color: red;
+}
+
+#confirmation {
+    padding: 0.8rem 2rem 1.5rem 2rem;
+    max-width: 400px;
+    background-color: white;
+    border-radius: 5px;
+    border: 1px solid black;
 }
 
 /* Styles that should be applied last */
