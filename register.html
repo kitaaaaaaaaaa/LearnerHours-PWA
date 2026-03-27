@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Code adapted from PWP6 -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learner Driving Hours</title>
+    <link rel="stylesheet" href="register-style.css">
+    <link rel="icon" href="icons/icon2.jpg">
+    <link rel="manifest" href="LearnerHours.json">
+</head>
+
+<body class="figtree-400">
+    <h1>Register/Login</h1>
+    <form id="registrationForm">
+        <fieldset>
+            <legend>Create an account</legend>
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username">
+            <div id="usernameError" class="error"></div>
+
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password">
+            <div id="passwordError" class="error"></div>
+
+            <label for="reenter-password">Reenter Password:</label>
+            <input type="password" id="reenter-password" name="password">
+            <div id="reenterPasswordError" class="error"></div>
+
+            <label for="phone">Phone Number:</label>
+            <input type="text" id="phone" name="phone">
+            <div id="phoneError" class="error"></div>
+
+            <div id="formError" class="error"></div>
+            <button type="submit">Register</button>
+        </fieldset>
+    </form>
+
+    <form id="loginForm">
+        <fieldset>
+            <legend>Sign into your account</legend>
+            <label for="login-username">Username:</label>
+            <input type="text" id="login-username" name="username">
+            <div id="login-usernameError" class="error"></div>
+
+            <label for="login-password">Password:</label>
+            <input type="password" id="login-password" name="password">
+            <div id="login-passwordError" class="error"></div>
+
+            <div id="login-formError" class="error"></div>
+            <button type="submit">Log in</button>
+        </fieldset>
+    </form>
+
+    <div class="popup-container loading hidden" id="loading-screen">
+        <video src="anim/loading.webm" autoplay loop muted>
+            Loading...
+        </video>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/simple-crypto-js@2.5.0/dist/SimpleCrypto.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bcryptjs/2.4.3/bcrypt.min.js" integrity="sha512-DNI/FJdkfyeuPUal7lDkRVg0mFY2n4IZJJYqPbQWLL0COxLi6G6nmf5gr1vW1Bd4wYC09hOvZVsSclfXxUTU/w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="register.js"></script>
+</body>
+
+</html>

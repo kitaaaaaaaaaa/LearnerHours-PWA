@@ -1,35 +1,49 @@
-body {
-  padding: 2vh 2vw;
-  margin: 0;
-  background-color: #efe;
+/* Import external fonts */
+@import url('https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300..900;1,300..900&family=Lora:ital,wght@0,400..700;1,400..700&display=swap');
 
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
+body {
+    padding: 2vh 2vw;
+    margin: 0;
+    background-color: #c4cbbc;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+h2 {
+    margin-bottom: -0.2em;
 }
 
 ul, fieldset, legend {
-  border: 1px solid;
-  border-radius: 5px;
-  background-color: #fff;
-  overflow: hidden;
+    border: 1px solid;
+    border-radius: 5px;
+    background-color: #f5f3ef;
+    overflow: hidden;
 }
 
 ul {
-  padding: 0;
-  font-family: monospace;
+    padding: 0;
+    font-family: monospace;
+}
+
+button, ul {
+    font-family: "Figtree", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
 }
 
 li, legend {
-  list-style-type: none;
-  padding: 0.2em 0.5em;
-  background-color: #cfc;
+    list-style-type: none;
+    padding: 0.2em 0.5em;
+    background-color: #c4c8b4;
 }
 
 li:nth-of-type(even) {
-  background-color: inherit;
+    background-color: inherit;
 }
 
 .popup-container {
@@ -38,64 +52,125 @@ li:nth-of-type(even) {
     left: 0;
     width: 100%;
     height: 100%;
-    
+
     display: flex;
     justify-content: center;
     align-items: center;
-    
+
     background-color: rgba(0, 0, 0, 0.5);
     z-index: 9999;
-
-    opacity: 1;
-    transition: opacity 0.5s ease-in-out;
 }
 
 #add-session-form, #edit-session-form {
-  background-color: #efe;
-  padding: 5vh 3vw;
-  width: 60%;
-  border-radius: 5px;
+    background-color: #c4cbbc;
+    padding: 5vh 3vw 4vh 3vw;
+    width: 60%;
+    border-radius: 5px;
 }
 
 @media (max-width: 768px) {
-  #add-session-form, #edit-session-form {
-    width: 85%;
-    font-size: 0.9em;
-  }
+    #add-session-form, #edit-session-form {
+        width: 85%;
+        font-size: 0.9em;
+    }
 }
 
 .hidden {
-  display: none;
-  opacity: 0;
+    display: none;
+    opacity: 0;
 }
 
 .error {
-  color: red;
-  font-size: 0.8em;
+    color: red;
+    font-size: 0.8em;
 }
 
 @media (max-width: 768px) {
-  .error {
-    margin-top: 3px;
-    font-size: 0.7em;
-    display: block;
-  }
-  .error.hidden {
-    margin-top: 0;
-    display: none;
-  }
+    .error {
+        margin-top: 3px;
+        font-size: 0.7em;
+        display: block;
+    }
+
+    .error.hidden {
+        margin-top: 0;
+        display: none;
+    }
 }
 
 .tile {
-  background: #ffffff;
-  border: 1px solid black;
-  border-radius: 5px;
-  text-align: center;
-  padding: 10px;
+    background: #f5f3ef;
+    border: 1px solid black;
+    border-radius: 5px;
+    text-align: center;
+    padding: 10px;
 }
 
 #tile-container {
     display: flex;
     flex-direction: row;
     gap: 20px;
+    margin-bottom: 0.6rem;
+}
+
+#fieldset-search {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+
+    align-items: center;
+    padding: 0.8rem 1rem 1rem 1rem;
+}
+
+#sessions-container {
+    overflow: hidden;
+    max-width: 100vw;
+    margin-top: 3rem;
+}
+
+@media (max-width: 576px) {
+    #sessions-container {
+        font-size: 0.9rem;
+    }
+
+    #fieldset-search {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+}
+
+#no-sessions-alert {
+    text-align: center;
+    margin-top: 2rem;
+    padding: 1rem 2rem;
+
+    border: 1px solid black;
+    border-radius: 5px;
+
+    background-color: #f5f3ef;
+
+    color: red;
+}
+
+#confirmation {
+    padding: 0.8rem 2rem 1.5rem 2rem;
+    max-width: 400px;
+    background-color: white;
+    border-radius: 5px;
+    border: 1px solid black;
+}
+
+/* Styles that should be applied last */
+.lora-400 {
+    font-family: "Lora", serif !important;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+}
+
+.figtree-400 {
+    font-family: "Figtree", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
 }
