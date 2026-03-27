@@ -3,7 +3,7 @@ const STORAGE_KEY = "user-information";
 const bcrypt = dcodeIO.bcrypt;
 
 // Initialise encryption library
-const SECRET_KEY = "learner-hours";
+const SECRET_KEY = "b3dc7ab9b72ccf9c933dedf29d0ea11bcab54f635ed819ebc2c9ad986170a609";
 const simpleCrypto = new SimpleCrypto(SECRET_KEY)
 
 // Create constants for the form
@@ -24,37 +24,37 @@ if (getCredentials().length !== 0) {
 // -----------------------------
 // Listen to registration form submissions
 // -----------------------------
-registerForm.addEventListener("submit", async (event) => { 
+registerForm.addEventListener("submit", async (event) => {
     event.preventDefault(); // Prevent form submission 
-    
+
     // Show a loading screen since the operation may take some time
     showLoading();
-    
+
     // Clear previous error messages 
-    clearErrors(); 
+    clearErrors();
 
     // Get form field values 
-    const username = document.getElementById("username").value; 
-    const password = document.getElementById("password").value; 
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
     const phone = document.getElementById("phone").value;
-    const reenteredPassword = document.getElementById("reenter-password").value; 
+    const reenteredPassword = document.getElementById("reenter-password").value;
 
     // Track if the form is valid 
-    let isValid = true; 
+    let isValid = true;
 
     // Validate Username 
     if (username === "") {  // If username is blank 
-        showError("usernameError", "Username is required"); 
-        isValid = false; 
-    } 
+        showError("usernameError", "Username is required");
+        isValid = false;
+    }
 
     // Validate Password (min 12 characters, at least one letter, one number and one special character) 
-    const passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=])[A-Za-z\d!@#$%^&*()_+\-=]{12,}$/; 
+    const passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=])[A-Za-z\d!@#$%^&*()_+\-=]{12,}$/;
 
-    if (!passwordPattern.test(password)) { 
-        showError("passwordError", "Password must be at least 12 characters long, contain letters, numbers and special characters such as !@#$%^&*()_+-="); 
-        isValid = false; 
-    } 
+    if (!passwordPattern.test(password)) {
+        showError("passwordError", "Password must be at least 12 characters long, contain letters, numbers and special characters such as !@#$%^&*()_+-=");
+        isValid = false;
+    }
 
     // Check if reentered password matches to verify data
     if (reenteredPassword !== password) {
@@ -63,12 +63,12 @@ registerForm.addEventListener("submit", async (event) => {
     }
 
     // Validate Phone Number (must be exactly 10 digits) 
-    const phonePattern = /^\d{10}$/; 
+    const phonePattern = /^\d{10}$/;
 
-    if (!phonePattern.test(phone)) { 
-        showError("phoneError", "Phone number must be exactly 10 digits"); 
-        isValid = false; 
-    } 
+    if (!phonePattern.test(phone)) {
+        showError("phoneError", "Phone number must be exactly 10 digits");
+        isValid = false;
+    }
 
     // Check if there is already an account on the device
     if (getCredentials().length !== 0) {
@@ -77,7 +77,7 @@ registerForm.addEventListener("submit", async (event) => {
     }
 
     // If the form is valid, submit it or show a success message 
-    if (isValid) { 
+    if (isValid) {
         const credentials = getCredentials();
 
         // Hash the password before storing it
@@ -85,7 +85,7 @@ registerForm.addEventListener("submit", async (event) => {
 
         // Add the new user data to the user info array
         // It is stored as an array to allow length checking easier
-        credentials.push({username, passwordHash, phone});
+        credentials.push({ username, passwordHash, phone });
 
         // Store the array back in the storage.
         window.localStorage.setItem(STORAGE_KEY, JSON.stringify(credentials));
@@ -100,7 +100,7 @@ registerForm.addEventListener("submit", async (event) => {
 
         // Redirect the user to the main page and reset UI
         window.location.replace("index.html");
-    } 
+    }
     hideLoading();
 });
 
@@ -204,12 +204,12 @@ function getCredentials() {
 }
 
 // Function to clear all error messages 
-function clearErrors() { 
-    const errorElements = document.querySelectorAll(".error"); 
-    errorElements.forEach(element => element.textContent = ""); 
+function clearErrors() {
+    const errorElements = document.querySelectorAll(".error");
+    errorElements.forEach(element => element.textContent = "");
 }
 
 // Function to show error message 
-function showError(elementId, message) { 
-    document.getElementById(elementId).textContent = message; 
+function showError(elementId, message) {
+    document.getElementById(elementId).textContent = message;
 } 

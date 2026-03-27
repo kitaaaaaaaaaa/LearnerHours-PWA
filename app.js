@@ -16,7 +16,7 @@ const pastSessionContainer = document.getElementById("past-sessions");
 const searchForm = document.getElementById("search-filter-form");
 
 // Initialise encryption library
-const SECRET_KEY = "learner-hours";
+const SECRET_KEY = "b3dc7ab9b72ccf9c933dedf29d0ea11bcab54f635ed819ebc2c9ad986170a609";
 const simpleCrypto = new SimpleCrypto(SECRET_KEY)
 
 // -----------------------------
@@ -28,7 +28,7 @@ async function checkSessionExpired() {
     try {
         // Decrypt session expiry
         const expiry = await simpleCrypto.decrypt(getSessionExpiry())
-        
+
         // Check if session is expired or if there is no session information
         if (new Date() > expiry || expiry === "") {
             // Delete the session information
@@ -37,14 +37,14 @@ async function checkSessionExpired() {
             // Redirect user to the login page
             window.location.replace("reigster.html")
         }
-    } catch(error) {
+    } catch (error) {
         // If decryption fails because there is no session expiry, handle errors gracefully
         window.location.replace("register.html")
     }
 }
 
 // Check if the session is expired every 10 minutes
-setInterval(checkSessionExpired, 600000)
+setInterval(checkSessionExpired, 10 * 60 * 1000)
 
 function getSessionExpiry() {
     // Get the user data from localStorage
@@ -148,12 +148,12 @@ newSessionFormEl.addEventListener("submit", (event) => {
 
     // Get the start and end dates from the form.
     // Sanitise user input as an additional security step to prevent malicious code from being stored
-    const date = DOMPurify.sanitise(dateInputEl.value);
-    const startTime = DOMPurify.sanitise(startTimeInputEl.value);
-    const endTime = DOMPurify.sanitise(endTimeInputEl.value);
-    const stateTerritory = DOMPurify.sanitise(stateTerritoryInputEl.value);
-    const startSuburb = DOMPurify.sanitise(startSuburbInputEl.value);
-    const endSuburb = DOMPurify.sanitise(endSuburbInputEl.value);
+    const date = DOMPurify.sanitize(dateInputEl.value);
+    const startTime = DOMPurify.sanitize(startTimeInputEl.value);
+    const endTime = DOMPurify.sanitize(endTimeInputEl.value);
+    const stateTerritory = DOMPurify.sanitize(stateTerritoryInputEl.value);
+    const startSuburb = DOMPurify.sanitize(startSuburbInputEl.value);
+    const endSuburb = DOMPurify.sanitize(endSuburbInputEl.value);
 
     hideAllErrors();
     // Check if the date is invalid
@@ -174,13 +174,20 @@ newSessionFormEl.addEventListener("submit", (event) => {
         invalid = true;
     }
 
+    // Check if there is a duplicate entry
+    const currentSession = { date, startTime, endTime, stateTerritory, startSuburb, endSuburb };
+    if (checkDuplicateSession(currentSession)) {
+        showError("end-suburb-error", "A duplicate entry already exists");
+        invalid = true;
+    }
+
     // If validation fails, do not store the session
     if (invalid) {
         return;
     }
 
     // Store the new session in our client-side storage.
-    sessionId = generateUniqueId();
+    let sessionId = generateUniqueId();
     storeNewSession(sessionId, date, startTime, endTime, stateTerritory, startSuburb, endSuburb);
 
     // Reset and hide the form
@@ -195,6 +202,33 @@ newSessionFormEl.addEventListener("submit", (event) => {
 // -----------------------------
 // Define functions for data validation
 // -----------------------------
+function checkDuplicateSession(currentSession, sessionId) {
+    const sessions = getAllStoredSessions();
+    let duplicate = false;
+
+    sessions.forEach((session) => {
+        let tempSession = session;
+        
+        // If every property is the exact same,
+        // and the session id is different, it is a duplicate session
+        if (
+            tempSession.sessionId !== sessionId &&
+            tempSession.date === currentSession.date &&
+            tempSession.startTime === currentSession.startTime &&
+            tempSession.endTime === currentSession.endTime &&
+            tempSession.stateTerritory === currentSession.stateTerritory &&
+            tempSession.startSuburb === currentSession.startSuburb &&
+            tempSession.endSuburb === currentSession.endSuburb
+        ) {
+            duplicate = true;
+        }
+    });
+
+    if (duplicate) {
+        return true;
+    }
+}
+
 function checkDateInvalid(date, errorElementId) {
     // Check that date is not null and is in the past
     const today = new Date().toLocaleDateString("en-CA");
@@ -573,12 +607,12 @@ function renderPastSessions(sessions) {
 
                 // Get the user inputs from the form
                 // Sanitise them as an additional security step to prevent malicious code from being stored
-                const editedDate = DOMPurify.sanitise(editDateInputEl.value);
-                const editedStartTime = DOMPurify.sanitise(editStartTimeInputEl.value);
-                const editedEndTime = DOMPurify.sanitise(editEndTimeInputEl.value);
-                const editedStateTerritory = DOMPurify.sanitise(editStateTerritoryInputEl.value);
-                const editedStartSuburb = DOMPurify.sanitise(editStartSuburbInputEl.value);
-                const editedEndSuburb = DOMPurify.sanitise(editEndSuburbInputEl.value);
+                const editedDate = DOMPurify.sanitize(editDateInputEl.value);
+                const editedStartTime = DOMPurify.sanitize(editStartTimeInputEl.value);
+                const editedEndTime = DOMPurify.sanitize(editEndTimeInputEl.value);
+                const editedStateTerritory = DOMPurify.sanitize(editStateTerritoryInputEl.value);
+                const editedStartSuburb = DOMPurify.sanitize(editStartSuburbInputEl.value);
+                const editedEndSuburb = DOMPurify.sanitize(editEndSuburbInputEl.value);
                 const sessionId = session.sessionId;
 
                 hideAllErrors();
@@ -586,6 +620,10 @@ function renderPastSessions(sessions) {
                 if (checkDateInvalid(editedDate, "edit-date-error")) { invalid = true; };
                 if (checkTimesInvalid(sessionId, editedStartTime, editedEndTime, editedDate, "edit-start-time-error", "edit-end-time-error")) { invalid = true; };
                 if (checkSuburbsInvalid(editedStartSuburb, editedEndSuburb, "edit-start-suburb-error", "edit-end-suburb-error")) { invalid = true; };
+                if (checkDuplicateSession({ date: editedDate, startTime: editedStartTime, endTime: editedEndTime, stateTerritory: editedStateTerritory, startSuburb: editedStartSuburb, endSuburb: editedEndSuburb }, sessionId)) { 
+                    invalid = true; 
+                    showError("edit-end-suburb-error", "A duplicate entry already exists");
+                };
 
                 if (invalid) {
                     return;
