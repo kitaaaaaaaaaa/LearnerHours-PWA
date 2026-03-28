@@ -14,11 +14,11 @@
     <h1>Driving Hours</h1>
     <div id="tile-container">
         <div class="tile">
-            <span id="total-hours"></span>
+            <span id="total-hours">00:00</span>
             <br>Hours Logged
         </div>
         <div class="tile">
-            <span id="total-trips"></span>
+            <span id="total-trips">0</span>
             <br>Trips
         </div>
     </div>
@@ -164,6 +164,12 @@
 
     <div class="popup-container hidden" id="confirmation-message">
         <div id="confirmation"></div>
+    </div>
+
+    <div class="popup-container loading hidden" id="loading-screen">
+        <video src="anim/loading.webm" autoplay loop muted>
+            Loading...
+        </video>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/simple-crypto-js@2.5.0/dist/SimpleCrypto.min.js"></script>

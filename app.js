@@ -199,7 +199,7 @@ newSessionFormEl.addEventListener("submit", (event) => {
     refreshUI();
 
     // Show a confirmation message
-    showConfirmation("Entry successfully saved", "Your new entry has been saved to your personal database");
+    showConfirmation("✅Entry successfully saved", "Your new entry has been saved to your personal database");
 });
 
 // -----------------------------
@@ -234,7 +234,7 @@ function checkDuplicateSession(currentSession, sessionId) {
 
 function checkDateInvalid(date, errorElementId) {
     // Check that date is not null and is in the past
-    const today = new Date().toLocaleDateString("en-CA");
+    const today = new Date().toLocaleDateString("en-AU");
 
     if (!date || date > today) {
         newSessionFormEl.reset();
@@ -260,7 +260,18 @@ function checkTimesInvalid(sessionId, startTime, endTime, date, startTimeErrorEl
         showError(endTimeErrorElementId, "End time is required");
         invalid = true;
     } else if (timeDifference(startTime, endTime) > "04:00") {
+        // Check if the session is longer than 4 hours to promote safe driving
         showError(endTimeErrorElementId, "Session cannot be longer than 4 hours");
+        invalid = true;
+    }
+
+    // Check if the start time and end time is in the past
+    const currentTime = new Date().toLocaleTimeString("en-AU", {hour12: false, hour: "2-digit", minute: "2-digit"})
+    if (startTime > currentTime) {
+        showError(startTimeErrorElementId, "Start time must be in the past")
+        invalid = true;
+    } else if (endTime > currentTime) {
+        showError(endTimeErrorElementId, "End time must be in the past")
         invalid = true;
     }
 
@@ -302,6 +313,14 @@ function checkSuburbsInvalid(startSuburb, endSuburb, startSuburbErrorElementId, 
 // -----------------------------
 // Define other functions
 // -----------------------------
+function showLoading() {
+    document.getElementById("loading-screen").classList.remove("hidden");
+}
+
+function hideLoading() {
+    document.getElementById("loading-screen").classList.add("hidden");
+}
+
 function storeNewSession(sessionId, date, startTime, endTime, stateTerritory, startSuburb, endSuburb) {
     // Get data from storage
     const sessions = getAllStoredSessions();
@@ -315,8 +334,22 @@ function storeNewSession(sessionId, date, startTime, endTime, stateTerritory, st
         return new Date(b.date) - new Date(a.date);
     });
 
-    // Store the updated array back in the storage.
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(sessions));
+    try {
+        // Turn the array into a string
+        const string = JSON.stringify(sessions);
+
+        // Encrypt the string before storing in local storage
+        const cipherText = simpleCrypto.encrypt(string);
+        
+        // Store the updated array back in the storage
+        window.localStorage.setItem(STORAGE_KEY, cipherText);
+    } catch (error) {
+        // If an error occurs, alert the user
+        showConfirmation("❌Error", "Something went wrong while saving your data")
+        
+        // The data will be stored unencrypted instead, to prevent data loss
+        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(sessions));
+    }
 }
 
 function storeEditedSessionArray(sessionArray) {
@@ -326,19 +359,45 @@ function storeEditedSessionArray(sessionArray) {
         return new Date(b.date) - new Date(a.date);
     });
 
-    // Store the edited array back in the storage.
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(sessionArray));
+    try {
+        // Turn the array into a string
+        const string = JSON.stringify(sessionArray);
+
+        // Encrypt the string before storing in local storage
+        const cipherText = simpleCrypto.encrypt(string);
+
+        // Store the edited array back in the storage.
+        window.localStorage.setItem(STORAGE_KEY, cipherText);
+    } catch (error) {
+        // If an error occurs, alert the user
+        showConfirmation("❌Error", "Something went wrong while saving your data")
+        
+        // The data will be stored unencrypted instead, to prevent data loss
+        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(sessionArray));
+    }
+    
 }
 
 function getAllStoredSessions() {
     // Get the string of session data from localStorage
-    const data = window.localStorage.getItem(STORAGE_KEY);
+    const cipherText = window.localStorage.getItem(STORAGE_KEY);
 
     // If no sessions were stored, default to an empty array
-    // otherwise, return the stored data as parsed JSON
-    const sessions = data ? JSON.parse(data) : [];
+    if (!cipherText) {
+        return [];
+    }
 
-    return sessions;
+    try {
+        // Decrypt the data from localStorage
+        const data = simpleCrypto.decrypt(cipherText);
+
+        // Return the data, since it comes decrypted as a parsed JSON
+        return data;
+    } catch (error) {
+        // If an error occurs, alert the user
+        showConfirmation("❌Error", "Something went wrong while loading your data");
+        return [];
+    }
 }
 
 function deleteSession(sessionId) {
@@ -601,7 +660,7 @@ function renderPastSessions(sessions) {
         });
 
         // Attach an event listener for when users want to EDIT sessions
-        editEl.addEventListener("click", (event) => {
+        editEl.addEventListener("click", () => {
             const editPopupEl = document.getElementById("edit-session-popup");
             const cancelEditPopupBtn = document.getElementById("cancel-edit-session");
 
@@ -689,7 +748,7 @@ function renderPastSessions(sessions) {
                 editSessionFormEl.removeEventListener("submit", onEditSessionFormSubmit);
 
                 // Show confirmation message
-                showConfirmation("Entry successfully edited", "Your entry has been updated and is stored in your personal database");
+                showConfirmation("✅Entry successfully edited", "Your entry has been updated and is stored in your personal database");
             }
         });
 
