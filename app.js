@@ -298,6 +298,10 @@ function checkTimesInvalid(sessionId, startTime, endTime, date, startTimeErrorEl
             } else if (endTime < session.endTime && endTime > session.startTime) {
                 showError(endTimeErrorElementId, "End time conflicts with existing session");
                 invalid = true;
+            } else if (startTime < session.startTime && endTime > session.endTime) {
+                showError(startTimeErrorElementId, "Start time conflicts with existing session");
+                showError(endTimeErrorElementId, "End time conflicts with existing session");
+                invalid = true;
             }
         }
     });
@@ -634,19 +638,22 @@ searchForm.addEventListener("submit", (event) => {
 
     // Filter the sessions displayed according to the search inputs
     const sessions = getAllStoredSessions();
+    let filteredSessions = sessions;
 
-    filteredSessions = sessions.filter((session) => {
-        return session.date === date;
-    });
+    if (date) {
+        filteredSessions = filteredSessions.filter((session) => {
+            return session.date === date;
+        });
+    }
 
-    filteredSessions = sessions.filter((session) => {
-        return session.startSuburb === suburb || session.endSuburb === suburb;
-    });
+    if (suburb) {
+        filteredSessions = filteredSessions.filter((session) => {
+            return session.startSuburb === suburb || session.endSuburb === suburb;
+        });
+    }
 
     // Refresh the UI
     renderPastSessions(filteredSessions);
-    renderTotalHoursLogged();
-    renderTotalTrips();
 
     // Reset the search form
     searchForm.reset();
