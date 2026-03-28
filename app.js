@@ -670,6 +670,7 @@ function renderPastSessions(sessions) {
         const noSessionsEl = document.createElement("div");
         noSessionsEl.id = "no-sessions-alert"
         noSessionsEl.textContent = "No sessions found"
+        noSessionsEl.style.backgroundColor = "#ffffff";
 
         pastSessionContainer.appendChild(pastSessionHeader);
         pastSessionContainer.appendChild(noSessionsEl);
