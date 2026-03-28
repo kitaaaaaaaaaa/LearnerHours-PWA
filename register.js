@@ -161,10 +161,13 @@ loginForm.addEventListener("submit", async (event) => {
 // -----------------------------
 // Define other functions
 // -----------------------------
+
+// Function to display a loading screen on the page
 function showLoading() {
     document.getElementById("loading-screen").classList.remove("hidden");
 }
 
+// Function to hide the loading screen on the page
 function hideLoading() {
     document.getElementById("loading-screen").classList.add("hidden");
 }
@@ -182,6 +185,7 @@ function generateExpiryTime() {
     return currentDate;
 }
 
+// Function to retrieve session expiry from sessionStorage
 function getSessionExpiry() {
     // Get the user data from localStorage
     const data = window.sessionStorage.getItem("session-info");
@@ -193,6 +197,7 @@ function getSessionExpiry() {
     return expiry;
 }
 
+// Function to retreive user credentials from localStorage
 function getCredentials() {
     // Get the user data from localStorage
     const data = window.localStorage.getItem(STORAGE_KEY);
@@ -213,4 +218,11 @@ function clearErrors() {
 // Function to show error message 
 function showError(elementId, message) {
     document.getElementById(elementId).textContent = message;
-} 
+}
+
+// When everything has been loaded, load the video of the loading animation
+// last to improve loading times
+window.addEventListener("load", () => {
+    const loadingAnim = document.getElementById("loading-video");
+    loadingAnim.load();
+});
