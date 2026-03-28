@@ -54,8 +54,8 @@
     </form>
 
     <div class="popup-container loading hidden" id="loading-screen">
-        <video src="anim/loading.webm" autoplay loop muted>
-            Loading...
+        <video autoplay loop muted playsinline preload="none" id="loading-video">
+            <source src="anim/loading.webm" type="video/webm">
         </video>
     </div>
 

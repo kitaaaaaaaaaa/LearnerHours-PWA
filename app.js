@@ -9,6 +9,7 @@ const stateTerritoryInputEl = document.getElementById("state-territory");
 const startSuburbInputEl = document.getElementById("start-suburb");
 const endSuburbInputEl = document.getElementById("end-suburb");
 
+// Create constants for storing sessions
 const STORAGE_KEY = "learner-hours";
 const pastSessionContainer = document.getElementById("past-sessions");
 
@@ -38,7 +39,7 @@ async function checkSessionExpired() {
             window.location.replace("register.html")
         }
     } catch (error) {
-        // If decryption fails because there is no session expiry, handle errors gracefully
+        // If decryption fails redirect the user to the login/register page
         window.location.replace("register.html")
     }
 }
@@ -64,7 +65,7 @@ let allSuburbs = [];
 const suburbsEl = document.getElementById("suburbs-list");
 
 fetch('au-suburbs.json') // Get a list of all valid suburbs
-    .then(response => response.json())
+    .then(response => response.json()) // Parse the text as JSON
     .then(data => {
         allSuburbs = data.map(item => `${item.suburb} ${item.postcode} ${item.state}`); // Format it into an array
         updateSuggestedSuburbs(stateTerritoryInputEl.value, suburbsEl); // Run the function when the page starts
@@ -75,7 +76,10 @@ stateTerritoryInputEl.addEventListener("change", () => {
     updateSuggestedSuburbs(stateTerritoryInputEl.value, suburbsEl)
 });
 
+// Function to update the suggested list of suburbs
+// given an input state or territory and a datalist
 function updateSuggestedSuburbs(value, datalist) {
+    // Filter the array based on the given value
     filteredSuburbs = allSuburbs.filter(item => item.includes(value));
 
     datalist.replaceChildren(); // Remove existing datalist elements
@@ -118,17 +122,20 @@ const popupEl = document.getElementById("add-session-popup");
 const popupBtn = document.getElementById("add-session-btn");
 const cancelPopupBtn = document.getElementById('cancel-add-session')
 
+// Function to show the add session popup
 function showSessionPopup() {
     updateSuggestedSuburbs(stateTerritoryInputEl.value, suburbsEl);
     popupEl.classList.remove("hidden");
 }
 
+// Function to hide the add session popup
 function hideSessionPopup() {
     newSessionFormEl.reset();
     popupEl.classList.add("hidden")
     hideAllErrors();
 }
 
+// Add event listeners to the relevant buttons
 popupBtn.addEventListener("click", showSessionPopup);
 cancelPopupBtn.addEventListener("click", hideSessionPopup);
 
@@ -136,10 +143,12 @@ cancelPopupBtn.addEventListener("click", hideSessionPopup);
 // Listen to form submissions.
 // -----------------------------
 newSessionFormEl.addEventListener("change", (event) => {
+    // Hide errors if the user starts to change their inputs
     hideAllErrors();
 });
 
 newSessionFormEl.addEventListener("submit", (event) => {
+    // Track if the form is invalid
     let invalid = false;
 
     // Prevent the form from submitting to the server
@@ -155,7 +164,9 @@ newSessionFormEl.addEventListener("submit", (event) => {
     const startSuburb = DOMPurify.sanitize(startSuburbInputEl.value);
     const endSuburb = DOMPurify.sanitize(endSuburbInputEl.value);
 
+    // Hide all errors if they persist from a previous form submission
     hideAllErrors();
+
     // Check if the date is invalid
     if (checkDateInvalid(date, "date-error")) {
         // If the date is invalid, exit.
@@ -205,9 +216,11 @@ newSessionFormEl.addEventListener("submit", (event) => {
 // -----------------------------
 // Define functions for data validation
 // -----------------------------
+
+// Function to check if there is a duplicate session upon creation
 function checkDuplicateSession(currentSession, sessionId) {
     const sessions = getAllStoredSessions();
-    let duplicate = false;
+    let duplicate = false; // Track if there is a duplicate function
 
     sessions.forEach((session) => {
         let tempSession = session;
@@ -227,11 +240,10 @@ function checkDuplicateSession(currentSession, sessionId) {
         }
     });
 
-    if (duplicate) {
-        return true;
-    }
+    return duplicate;
 }
 
+// Function to check if the date is invalid
 function checkDateInvalid(date, errorElementId) {
     // Check that date is not null and is in the past
     const today = new Date().toLocaleDateString("en-AU");
@@ -239,17 +251,18 @@ function checkDateInvalid(date, errorElementId) {
     if (!date || date > today) {
         newSessionFormEl.reset();
         showError(errorElementId, "Date must be in the past");
-        // as date is invalid, we return true
+        // As date is invalid, we return true
         return true;
     }
-    // else
+    // Otherwise...
     return false;
 }
 
+// Function to check if the times are invalid
 function checkTimesInvalid(sessionId, startTime, endTime, date, startTimeErrorElementId, endTimeErrorElementId) {
     let invalid = false;
 
-    // Check that end time is after start time, and neither is null.
+    // Check that end time is after start time, and neither is null
     if (!startTime || !endTime || startTime > endTime) {
         showError(startTimeErrorElementId, "Start time must be before end time");
         invalid = true;
@@ -266,7 +279,7 @@ function checkTimesInvalid(sessionId, startTime, endTime, date, startTimeErrorEl
     }
 
     // Check if the start time and end time is in the past
-    const currentTime = new Date().toLocaleTimeString("en-AU", {hour12: false, hour: "2-digit", minute: "2-digit"})
+    const currentTime = new Date().toLocaleTimeString("en-AU", { hour12: false, hour: "2-digit", minute: "2-digit" })
     if (startTime > currentTime) {
         showError(startTimeErrorElementId, "Start time must be in the past")
         invalid = true;
@@ -289,6 +302,7 @@ function checkTimesInvalid(sessionId, startTime, endTime, date, startTimeErrorEl
         }
     });
 
+    // If the times are invalid, reset the form and return true
     if (invalid) {
         newSessionFormEl.reset();
         return true;
@@ -296,8 +310,9 @@ function checkTimesInvalid(sessionId, startTime, endTime, date, startTimeErrorEl
     return false;
 }
 
+// Function to check if the suburbs are valid
 function checkSuburbsInvalid(startSuburb, endSuburb, startSuburbErrorElementId, endSuburbErrorElementId) {
-    // Check that the inputted suburbs are part of the list of suburbs, and neither is null.
+    // Check that the inputted suburbs are part of the list of suburbs, and neither is null
     if (!endSuburb || !allSuburbs.includes(endSuburb)) {
         newSessionFormEl.reset()
         showError(endSuburbErrorElementId, "Invalid end suburb");
@@ -307,29 +322,34 @@ function checkSuburbsInvalid(startSuburb, endSuburb, startSuburbErrorElementId, 
         showError(startSuburbErrorElementId, "Invalid start suburb");
         return true;
     }
+    // Otherwise...
     return false;
 }
 
 // -----------------------------
 // Define other functions
 // -----------------------------
+
+// Function to show a loading screen
 function showLoading() {
     document.getElementById("loading-screen").classList.remove("hidden");
 }
 
+// Function to hide a loading screen
 function hideLoading() {
     document.getElementById("loading-screen").classList.add("hidden");
 }
 
+// Function to store a new session in localStorage 
 function storeNewSession(sessionId, date, startTime, endTime, stateTerritory, startSuburb, endSuburb) {
     // Get data from storage
     const sessions = getAllStoredSessions();
 
-    // Add the new session object to the end of the array of session objects.
+    // Add the new session object to the end of the array of session objects
     sessions.push({ sessionId, date, startTime, endTime, stateTerritory, startSuburb, endSuburb });
 
     // Sort the array so that sessions are ordered by date, from newest
-    // to oldest.
+    // to oldest
     sessions.sort((a, b) => {
         return new Date(b.date) - new Date(a.date);
     });
@@ -340,21 +360,22 @@ function storeNewSession(sessionId, date, startTime, endTime, stateTerritory, st
 
         // Encrypt the string before storing in local storage
         const cipherText = simpleCrypto.encrypt(string);
-        
+
         // Store the updated array back in the storage
         window.localStorage.setItem(STORAGE_KEY, cipherText);
     } catch (error) {
         // If an error occurs, alert the user
         showConfirmation("❌Error", "Something went wrong while saving your data")
-        
+
         // The data will be stored unencrypted instead, to prevent data loss
         window.localStorage.setItem(STORAGE_KEY, JSON.stringify(sessions));
     }
 }
 
+// Function to edit a session
 function storeEditedSessionArray(sessionArray) {
     // Sort the array so that sessions are ordered by date, from newest
-    // to oldest.
+    // to oldest
     sessionArray.sort((a, b) => {
         return new Date(b.date) - new Date(a.date);
     });
@@ -371,13 +392,13 @@ function storeEditedSessionArray(sessionArray) {
     } catch (error) {
         // If an error occurs, alert the user
         showConfirmation("❌Error", "Something went wrong while saving your data")
-        
+
         // The data will be stored unencrypted instead, to prevent data loss
         window.localStorage.setItem(STORAGE_KEY, JSON.stringify(sessionArray));
     }
-    
 }
 
+// Function to retrieve sessions from localStorage
 function getAllStoredSessions() {
     // Get the string of session data from localStorage
     const cipherText = window.localStorage.getItem(STORAGE_KEY);
@@ -396,14 +417,15 @@ function getAllStoredSessions() {
     } catch (error) {
         // If an error occurs, alert the user
         showConfirmation("❌Error", "Something went wrong while loading your data");
-        return [];
+        return []; // Return an empty array
     }
 }
 
+// Function to delete a specific session
 function deleteSession(sessionId) {
     const sessions = getAllStoredSessions();
 
-    // Loop through the sessions and delete the specified session
+    // Loop through the sessions to find and  delete the specified session
     sessions.forEach((session) => {
         if (sessionId === session.sessionId) {
             const index = sessions.indexOf(session);
@@ -416,12 +438,14 @@ function deleteSession(sessionId) {
     refreshUI();
 }
 
+// Function to refresh all elements of the UI
 function refreshUI() {
     renderPastSessions(getAllStoredSessions());
     renderTotalHoursLogged();
     renderTotalTrips();
 }
 
+// Function to format a date
 function formatDate(dateString) {
     // Convert the date string to a Date object.
     const date = new Date(dateString);
@@ -430,6 +454,7 @@ function formatDate(dateString) {
     return date.toLocaleDateString();
 }
 
+// Function to format a time
 function formatTime(timeString) {
     // Change from 24-hour to 12-hour format
 
@@ -470,11 +495,13 @@ function timeDifference(startTime, endTime) {
     return minutesToHHMM(difference);
 }
 
+// Function to add the duration of all sessions
 function addSessionTimes() {
     const sessions = getAllStoredSessions();
     let totalSessionMinutes = 0;
 
     sessions.forEach((session) => {
+        // Calculate the duration of each session
         duration = timeDifference(session.startTime, session.endTime);
 
         // Convert times into minutes
@@ -482,9 +509,11 @@ function addSessionTimes() {
         totalSessionMinutes = totalSessionMinutes + totalDurationMinutes;
     })
 
+    // Format the amount of minutes to HH:MM
     return minutesToHHMM(totalSessionMinutes);
 }
 
+// Function to convert format HH:MM to a number of minutes
 function HHMMToMinutes(time) {
     hours = time.split(":")[0]
     minutes = time.split(":")[1]
@@ -492,26 +521,29 @@ function HHMMToMinutes(time) {
     return Number(hours * 60) + Number(minutes);
 }
 
+// Function to convert a number of minutes to format HH:MM
 function minutesToHHMM(minutes) {
-    hours = Math.floor(minutes / 60);
-    minutes = minutes % 60
+    hours = Math.floor(minutes / 60); // Divide number of minutes by 60
+    minutes = minutes % 60 // Find the remainder
 
+    // Return a string formatted in HH:MM
     return String(`${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`);
 }
 
-
-// Render the total hours logged on the page
+// Function to render the total hours logged on the page
 function renderTotalHoursLogged() {
     const totalHoursEl = document.getElementById("total-hours");
     totalHoursEl.textContent = addSessionTimes();
 }
 
+// Function to render the total number of trips on the page
 function renderTotalTrips() {
     const sessions = getAllStoredSessions();
     const totalTripsEl = document.getElementById("total-trips");
     totalTripsEl.textContent = sessions.length;
 }
 
+// Function to show an error message on a form
 function showError(elementId, message) {
     // Show the error message with given element id
     const errorElement = document.getElementById(elementId);
@@ -519,6 +551,7 @@ function showError(elementId, message) {
     errorElement.textContent = message;
 }
 
+// Function to hide all error messages on a form
 function hideAllErrors() {
     // Select all elements with the error class
     const errorElements = document.querySelectorAll(".error");
@@ -532,17 +565,20 @@ function hideAllErrors() {
 // Function to generate unique IDs for sessions
 function generateUniqueId() {
     const sessions = getAllStoredSessions();
+    // Generate a unique ID in a cryptographically secure manner
     let uniqueId = SimpleCrypto.generateRandom();
 
+    // Check if the id already exists
     sessions.forEach((session) => {
         if (session.id === uniqueId) {
-            uniqueId = generateUniqueId();
+            uniqueId = generateUniqueId(); // Regenerate the id
         }
     })
 
     return uniqueId;
 }
 
+// Function to display a popup with a message on the screen
 function showConfirmation(heading, description) {
     const confirmation = document.getElementById("confirmation")
     confirmation.textContent = ''; // Clear any existing messages
@@ -575,7 +611,6 @@ function showConfirmation(heading, description) {
     });
 }
 
-
 // -----------------------------
 // Allow the user to search for specific sessions
 // -----------------------------
@@ -597,6 +632,7 @@ searchForm.addEventListener("submit", (event) => {
         return;
     }
 
+    // Filter the sessions displayed according to the search inputs
     const sessions = getAllStoredSessions();
 
     filteredSessions = sessions.filter((session) => {
@@ -607,10 +643,12 @@ searchForm.addEventListener("submit", (event) => {
         return session.startSuburb === suburb || session.endSuburb === suburb;
     });
 
+    // Refresh the UI
     renderPastSessions(filteredSessions);
     renderTotalHoursLogged();
     renderTotalTrips();
 
+    // Reset the search form
     searchForm.reset();
 })
 
@@ -618,7 +656,7 @@ searchForm.addEventListener("submit", (event) => {
 // Render the past sessions on the page
 // -----------------------------
 function renderPastSessions(sessions) {
-    // Clear the list of past sessions, since we're going to re-render it.
+    // Clear the list of past sessions, since we're going to re-render it
     pastSessionContainer.textContent = "";
 
     const pastSessionHeader = document.createElement("h2");
@@ -628,6 +666,7 @@ function renderPastSessions(sessions) {
 
     // Exit if there are no sessions
     if (sessions.length === 0) {
+        // Display a message to the user
         const noSessionsEl = document.createElement("div");
         noSessionsEl.id = "no-sessions-alert"
         noSessionsEl.textContent = "No sessions found"
@@ -636,8 +675,6 @@ function renderPastSessions(sessions) {
         pastSessionContainer.appendChild(noSessionsEl);
         return;
     }
-
-
 
     // Loop over all sessions and render them with additional elements for editing
     sessions.forEach((session) => {
@@ -699,10 +736,11 @@ function renderPastSessions(sessions) {
 
             editSessionFormEl.addEventListener("submit", onEditSessionFormSubmit);
 
+            // When the form is submitted...
             function onEditSessionFormSubmit(event) {
-                event.preventDefault();
+                event.preventDefault(); // Prevent the form from submitting to a server
 
-                let invalid = false;
+                let invalid = false; // Track if the form is invalid
 
                 // Get the user inputs from the form
                 // Sanitise them as an additional security step to prevent malicious code from being stored
@@ -714,16 +752,27 @@ function renderPastSessions(sessions) {
                 const editedEndSuburb = DOMPurify.sanitize(editEndSuburbInputEl.value);
                 const sessionId = session.sessionId;
 
+                // Hide any persisting errors from previous edits
                 hideAllErrors();
+
                 // Validate user inputs
-                if (checkDateInvalid(editedDate, "edit-date-error")) { invalid = true; };
-                if (checkTimesInvalid(sessionId, editedStartTime, editedEndTime, editedDate, "edit-start-time-error", "edit-end-time-error")) { invalid = true; };
-                if (checkSuburbsInvalid(editedStartSuburb, editedEndSuburb, "edit-start-suburb-error", "edit-end-suburb-error")) { invalid = true; };
-                if (checkDuplicateSession({ date: editedDate, startTime: editedStartTime, endTime: editedEndTime, stateTerritory: editedStateTerritory, startSuburb: editedStartSuburb, endSuburb: editedEndSuburb }, sessionId)) {
+                if (checkDateInvalid(editedDate, "edit-date-error")) {
+                    invalid = true;
+                };
+                if (checkTimesInvalid(sessionId, editedStartTime, editedEndTime, editedDate, "edit-start-time-error", "edit-end-time-error")) {
+                    invalid = true;
+                };
+                if (checkSuburbsInvalid(editedStartSuburb, editedEndSuburb, "edit-start-suburb-error", "edit-end-suburb-error")) {
+                    invalid = true;
+                };
+                // Create a session object for easier comparison
+                const sessionObject = { date: editedDate, startTime: editedStartTime, endTime: editedEndTime, stateTerritory: editedStateTerritory, startSuburb: editedStartSuburb, endSuburb: editedEndSuburb }
+                if (checkDuplicateSession(sessionObject, sessionId)) {
                     invalid = true;
                     showError("edit-end-suburb-error", "A duplicate entry already exists");
                 };
 
+                // Exit if the form is invalid
                 if (invalid) {
                     return;
                 }
