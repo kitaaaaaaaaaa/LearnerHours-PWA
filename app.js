@@ -246,7 +246,7 @@ function checkDuplicateSession(currentSession, sessionId) {
 // Function to check if the date is invalid
 function checkDateInvalid(date, errorElementId) {
     // Check that date is not null and is in the past
-    const today = new Date().toLocaleDateString("en-AU");
+    const today = new Date().toLocaleDateString("en-CA");
 
     if (!date || date > today) {
         newSessionFormEl.reset();
