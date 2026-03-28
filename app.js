@@ -404,7 +404,7 @@ function getAllStoredSessions() {
     const cipherText = window.localStorage.getItem(STORAGE_KEY);
 
     // If no sessions were stored, default to an empty array
-    if (cipherText === '[]') {
+    if (cipherText === '[]' || !cipherText) {
         return [];
     }
 
