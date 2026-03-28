@@ -1,5 +1,5 @@
  // create version number
-const VERSION = "v1";
+const VERSION = "v2";
 
 // use the version number to create cache name
 const CACHE_NAME = `learner-hours-${VERSION}`;
@@ -10,9 +10,21 @@ const APP_STATIC_RESOURCES = [
     "/index.html",
     "/style.css",
     "/app.js",
+    "/register.html",
+    "/register-style.css",
+    "/register.js",
     "/LearnerHours.json",
-    "/icons/icon2.jpg",
-    "/au-suburbs.json"
+    "/icons/icon1.png",
+    "/icons/icon2.jpg", 
+    "/au-suburbs.json",
+    "/anim/loading.webm",
+    "/libs/bcrypt.min.js",
+    "/libs/purify.min.js",
+    "/libs/SimpleCrypto.min.js",
+    "/libs/all.min.css",
+    "/fonts/Figtree-VariableFont_wght.ttf",
+    "/webfonts/fa-regular-400.woff2",
+    "/webfonts/fa-solid-900.woff2"
 ]; 
 
 self.addEventListener("install", (event) => {
@@ -51,23 +63,21 @@ self.addEventListener("activate", (event) => {
 // On fetch, intercept server requests
 // and respond with cached responses instead of going to network
 self.addEventListener("fetch", (event) => {
-    // As a single page app, direct app to always go to cached home page.
-    if (event.request.mode === "navigate") {  // Looking for a web page
-        event.respondWith(caches.match("/"));
-        return;
-    }
-
-    // For all other requests, go to the cache first, and then the network.
+    // Go to the cache first, and then the network.
     event.respondWith(
         (async () => {
             const cache = await caches.open(CACHE_NAME);
-            const cachedResponse = await cache.match(event.request.url);
+            const cachedResponse = await cache.match(event.request);
             if (cachedResponse) {
                 // Return the cached response if it's available.
                 return cachedResponse;
             }
-            // If resource isn't in the cache, return a 404.
-            return new Response(null, { status: 404 });
+            // If resource isn't in the cache, use the network
+            try {
+                return await fetch(event.request);
+            } catch (error) {
+                return new Response(null, { status: 404 });
+            }
         })(),
     );
 });

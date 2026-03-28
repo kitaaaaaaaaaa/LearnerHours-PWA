@@ -1,3 +1,8 @@
+@font-face {
+  font-family: Figtree;
+  src: url(fonts/Figtree-VariableFont_wght.ttf);
+}
+
 body {
   padding: 2vh 2vw;
   margin: 0;

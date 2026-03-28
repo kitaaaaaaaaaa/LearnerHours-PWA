@@ -9,11 +9,8 @@
     <link rel="manifest" href="LearnerHours.json">
     <link rel="icon" href="icons/icon2.jpg">
 
-    <!-- Load external fonts and icons -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Load external font library -->
+    <link rel="stylesheet" href="libs/all.min.css">
 </head>
 
 <body class="figtree-400">
@@ -180,19 +177,17 @@
         <div id="confirmation"></div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/simple-crypto-js@2.5.0/dist/SimpleCrypto.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.2.7/purify.min.js"
-        integrity="sha512-78KH17QLT5e55GJqP76vutp1D2iAoy06WcYBXB6iBCsmO6wWzx0Qdg8EDpm8mKXv68BcvHOyeeP4wxAL0twJGQ=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="libs/SimpleCrypto.min.js"></script>
+    <script src="libs/purify.min.js"></script>
     <script src="app.js" defer></script>
 
     <!-- Register the app's service worker -->
 
-    <!-- <script>
+    <script>
         if ("serviceWorker" in navigator) {
             navigator.serviceWorker.register("sw.js")
         }
-    </script> -->
+    </script>
 </body>
 
 </html>
