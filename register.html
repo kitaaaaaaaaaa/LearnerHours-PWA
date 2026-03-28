@@ -9,6 +9,11 @@
     <link rel="stylesheet" href="register-style.css">
     <link rel="icon" href="icons/icon2.jpg">
     <link rel="manifest" href="LearnerHours.json">
+
+    <!-- Load external fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
 </head>
 
 <body class="figtree-400">
@@ -17,19 +22,19 @@
         <fieldset>
             <legend>Create an account</legend>
             <label for="username">Username:</label>
-            <input type="text" id="username" name="username">
+            <input type="text" id="username" name="username" class="figtree-400">
             <div id="usernameError" class="error"></div>
 
             <label for="password">Password:</label>
-            <input type="password" id="password" name="password">
+            <input type="password" id="password" name="password" class="figtree-400">
             <div id="passwordError" class="error"></div>
 
             <label for="reenter-password">Reenter Password:</label>
-            <input type="password" id="reenter-password" name="password">
+            <input type="password" id="reenter-password" name="password" class="figtree-400">
             <div id="reenterPasswordError" class="error"></div>
 
             <label for="phone">Phone Number:</label>
-            <input type="text" id="phone" name="phone">
+            <input type="text" id="phone" name="phone" class="figtree-400">
             <div id="phoneError" class="error"></div>
 
             <div id="formError" class="error"></div>
@@ -41,11 +46,11 @@
         <fieldset>
             <legend>Sign into your account</legend>
             <label for="login-username">Username:</label>
-            <input type="text" id="login-username" name="username">
+            <input type="text" id="login-username" name="username" class="figtree-400">
             <div id="login-usernameError" class="error"></div>
 
             <label for="login-password">Password:</label>
-            <input type="password" id="login-password" name="password">
+            <input type="password" id="login-password" name="password" class="figtree-400">
             <div id="login-passwordError" class="error"></div>
 
             <div id="login-formError" class="error"></div>
@@ -61,7 +66,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/simple-crypto-js@2.5.0/dist/SimpleCrypto.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bcryptjs/2.4.3/bcrypt.min.js" integrity="sha512-DNI/FJdkfyeuPUal7lDkRVg0mFY2n4IZJJYqPbQWLL0COxLi6G6nmf5gr1vW1Bd4wYC09hOvZVsSclfXxUTU/w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="register.js"></script>
+    <script src="register.js" defer></script>
 </body>
 
 </html>

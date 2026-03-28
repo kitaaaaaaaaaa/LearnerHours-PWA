@@ -8,17 +8,26 @@
     <link rel="stylesheet" href="style.css" />
     <link rel="manifest" href="LearnerHours.json">
     <link rel="icon" href="icons/icon2.jpg">
+
+    <!-- Load external fonts and icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 
 <body class="figtree-400">
-    <h1>Driving Hours</h1>
+    <div id="title">
+        <img src="icons/icon1.png" alt="Learner Hours Icon" width="32px" height="32px" loading="lazy">
+        <h1>Driving Hours</h1>
+    </div>
     <div id="tile-container">
         <div class="tile">
-            <span id="total-hours">00:00</span>
+            <span id="total-hours" class="highlight">00:00</span>
             <br>Hours Logged
         </div>
         <div class="tile">
-            <span id="total-trips">0</span>
+            <span id="total-trips" class="highlight">0</span>
             <br>Trips
         </div>
     </div>
@@ -33,24 +42,24 @@
                 <legend>Enter the date and start & end times</legend>
                 <p>
                     <label for="date">Date</label>
-                    <input type="date" id="date" required />
+                    <input type="date" id="date" required class="figtree-400">
                     <span class="error hidden" id="date-error">Date Invalid</span>
                 </p>
                 <div style="margin-left:30px;">
                     <p>
                         <label for="start-time">Start time</label>
-                        <input type="time" id="start-time" required />
+                        <input type="time" id="start-time" required class="figtree-400">
                         <span class="error hidden" id="start-time-error">Start time Invalid</span>
                     </p>
                     <p>
                         <label for="end-time">End time</label>
-                        <input type="time" id="end-time" required />
+                        <input type="time" id="end-time" required class="figtree-400">
                         <span class="error hidden" id="end-time-error">End time Invalid</span>
                     </p>
                 </div>
                 <p>
                     <label for="state-territory">State/Territory</label>
-                    <select id="state-territory" required>
+                    <select id="state-territory" required class="figtree-400">
                         <option value="NSW">New South Wales</option>
                         <option value="VIC">Victoria</option>
                         <option value="QLD">Queensland</option>
@@ -64,12 +73,12 @@
                 <div style="margin-left: 30px;">
                     <p>
                         <label for="start-suburb">Start Suburb</label>
-                        <input list="suburbs-list" id="start-suburb" type="text" required autocomplete="off">
+                        <input list="suburbs-list" id="start-suburb" type="text" required autocomplete="off" class="figtree-400">
                         <span class="error hidden" id="start-suburb-error">Start Suburb Invalid</span>
                     </p>
                     <p>
                         <label for="end-suburb">End Suburb</label>
-                        <input list="suburbs-list" type="text" id="end-suburb" required autocomplete="off">
+                        <input list="suburbs-list" type="text" id="end-suburb" required autocomplete="off" class="figtree-400">
                         <span class="error hidden" id="end-suburb-error">End Suburb Invalid</span>
                     </p>
                     <datalist id="suburbs-list"></datalist>
@@ -89,24 +98,24 @@
                 <legend>Edit the date and start & end times</legend>
                 <p>
                     <label for="edit-date">Date</label>
-                    <input type="date" id="edit-date" required />
+                    <input type="date" id="edit-date" required class="figtree-400">
                     <span class="error hidden" id="edit-date-error">Date Invalid</span>
                 </p>
                 <div style="margin-left:30px;">
                     <p>
                         <label for="start-time">Start time</label>
-                        <input type="time" id="edit-start-time" required />
+                        <input type="time" id="edit-start-time" required class="figtree-400">
                         <span class="error hidden" id="edit-start-time-error">Start time Invalid</span>
                     </p>
                     <p>
                         <label for="end-time">End time</label>
-                        <input type="time" id="edit-end-time" required />
+                        <input type="time" id="edit-end-time" required class="figtree-400">
                         <span class="error hidden" id="edit-end-time-error">End time Invalid</span>
                     </p>
                 </div>
                 <p>
                     <label for="state-territory">State/Territory</label>
-                    <select id="edit-state-territory" required>
+                    <select id="edit-state-territory" required class="figtree-400">
                         <option value="NSW">New South Wales</option>
                         <option value="VIC">Victoria</option>
                         <option value="QLD">Queensland</option>
@@ -120,12 +129,12 @@
                 <div style="margin-left: 30px;">
                     <p>
                         <label for="edit-start-suburb">Start Suburb</label>
-                        <input list="edit-suburbs-list" id="edit-start-suburb" type="text" required autocomplete="off">
+                        <input list="edit-suburbs-list" id="edit-start-suburb" type="text" required autocomplete="off" class="figtree-400">
                         <span class="error hidden" id="edit-start-suburb-error">Start Suburb Invalid</span>
                     </p>
                     <p>
                         <label for="edit-end-suburb">End Suburb</label>
-                        <input list="edit-suburbs-list" type="text" id="edit-end-suburb" required autocomplete="off">
+                        <input list="edit-suburbs-list" type="text" id="edit-end-suburb" required autocomplete="off" class="figtree-400">
                         <span class="error hidden" id="edit-end-suburb-error">End Suburb Invalid</span>
                     </p>
                     <datalist id="edit-suburbs-list"></datalist>
@@ -144,22 +153,27 @@
                 <legend>Search Sessions</legend>
                 <div>
                     <label for="search-date">Date</label>
-                    <input type="date" id="search-date">
+                    <input type="date" id="search-date" class="figtree-400">
                 </div>
                 <div>
                     <label for="search-suburb">Suburb</label>
-                    <input list="search-suburbs-list" type="text" id="search-suburb" autocomplete="off">
+                    <input list="search-suburbs-list" type="text" id="search-suburb" autocomplete="off" class="figtree-400">
                     <datalist id="search-suburbs-list"></datalist>
                 </div>
-
-                <button type="submit">Search</button>
-                <button type="reset" id="clear-search" onclick="refreshUI()">Clear</button>
-                <span class="error hidden" id="search-error">Invalid search query</span>
+                
+                <div>
+                    <button type="submit">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </button>
+                    <button type="reset" id="clear-search" onclick="refreshUI()">Clear</button>
+                    <span class="error hidden" id="search-error">Invalid search query</span>
+                </div>
             </fieldset>
         </form>
 
 
-        <section id="past-sessions"></section>
+        <section id="past-sessions">
+        </section>
     </div>
 
     <div class="popup-container hidden" id="confirmation-message">

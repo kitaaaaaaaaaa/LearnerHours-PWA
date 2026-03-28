@@ -451,7 +451,7 @@ function formatDate(dateString) {
     const date = new Date(dateString);
 
     // Format the date into a locale-specific string.
-    return date.toLocaleDateString();
+    return date.toLocaleDateString([], {dateStyle: "medium"});
 }
 
 // Function to format a time
@@ -682,11 +682,17 @@ function renderPastSessions(sessions) {
 
         // Create an edit button for each session
         const editEl = document.createElement("button");
-        editEl.textContent = "Edit";
+        const editIcon = document.createElement("i")
+        editIcon.classList.add("fa-regular")
+        editIcon.classList.add("fa-pen-to-square")
+        editEl.appendChild(editIcon)
 
         // Create a delete button for each session
         const deleteEl = document.createElement("button");
-        deleteEl.textContent = "Delete";
+        const deleteIcon = document.createElement("i")
+        deleteIcon.classList.add("fa-solid")
+        deleteIcon.classList.add("fa-trash")
+        deleteEl.appendChild(deleteIcon)
 
         // Attach an event listener for when users want to DELETE sessions
         deleteEl.addEventListener("click", () => {
@@ -803,11 +809,21 @@ function renderPastSessions(sessions) {
 
         // Set the display format for the past sessions in main UI
         // Use textContent, which uses output encoding
-        sessionEl.textContent = `${formatDate(session.date)}
-        from ${formatTime(session.startTime,)} to ${formatTime(session.endTime)} |
-        ${session.startSuburb} to ${session.endSuburb}
-        | Duration - ${timeDifference(session.startTime, session.endTime)}`;
+        const displayDate = formatDate(session.date);
+        const displayStartTime = formatTime(session.startTime);
+        const displayEndTime = formatTime(session.endTime)
+        const displayStartSuburb = session.startSuburb;
+        const displayEndSuburb = session.endSuburb;
+        const displayDuration = timeDifference(session.startTime, session.endTime);
 
+        const details = document.createElement("span")
+        details.classList.add("sessionDetails")
+
+        details.textContent = `${displayDate} - ⏱️${displayDuration}
+${displayStartTime} to ${displayEndTime}
+${displayStartSuburb} ➔ ${displayEndSuburb}`;
+
+        sessionEl.appendChild(details)
         sessionEl.appendChild(editEl);
         sessionEl.appendChild(deleteEl);
         pastSessionList.appendChild(sessionEl);

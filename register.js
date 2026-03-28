@@ -219,3 +219,10 @@ function clearErrors() {
 function showError(elementId, message) {
     document.getElementById(elementId).textContent = message;
 }
+
+// When everything has been loaded, load the video of the loading animation
+// last to improve loading times
+window.addEventListener("load", () => {
+    const loadingAnim = document.getElementById("loading-video");
+    loadingAnim.load();
+});
