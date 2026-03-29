@@ -18,7 +18,7 @@ const searchForm = document.getElementById("search-filter-form");
 
 // Initialise encryption library
 const SECRET_KEY = "b3dc7ab9b72ccf9c933dedf29d0ea11bcab54f635ed819ebc2c9ad986170a609";
-const simpleCrypto = new SimpleCrypto(SECRET_KEY)
+const simpleCrypto = new SimpleCrypto(SECRET_KEY);
 
 // -----------------------------
 // Check if the session is expired
@@ -28,24 +28,24 @@ checkSessionExpired();
 async function checkSessionExpired() {
     try {
         // Decrypt session expiry
-        const expiry = await simpleCrypto.decrypt(getSessionExpiry())
+        const expiry = await simpleCrypto.decrypt(getSessionExpiry());
 
         // Check if session is expired or if there is no session information
         if (new Date().toISOString() > expiry || expiry === "") {
             // Delete the session information
-            window.sessionStorage.removeItem("session-info")
+            window.sessionStorage.removeItem("session-info");
 
             // Redirect user to the login page
-            window.location.replace("register.html")
+            window.location.replace("register.html");
         }
     } catch (error) {
         // If decryption fails redirect the user to the login/register page
-        window.location.replace("register.html")
+        window.location.replace("register.html");
     }
 }
 
 // Check if the session is expired every 10 minutes
-setInterval(checkSessionExpired, 10 * 60 * 1000)
+setInterval(checkSessionExpired, 10 * 60 * 1000);
 
 function getSessionExpiry() {
     // Get the user data from localStorage
@@ -64,10 +64,12 @@ function getSessionExpiry() {
 let allSuburbs = [];
 const suburbsEl = document.getElementById("suburbs-list");
 
-fetch('au-suburbs.json') // Get a list of all valid suburbs
-    .then(response => response.json()) // Parse the text as JSON
+fetch("au-suburbs.json") // Get a list of all valid suburbs
+    .then((response) => response.json()) // Parse the text as JSON
     .then(data => {
-        allSuburbs = data.map(item => `${item.suburb} ${item.postcode} ${item.state}`); // Format it into an array
+        allSuburbs = data.map(
+            item => `${item.suburb} ${item.postcode} ${item.state}` // Format it into an array
+        );
         updateSuggestedSuburbs(stateTerritoryInputEl.value, suburbsEl); // Run the function when the page starts
     });
 
@@ -101,7 +103,9 @@ searchSuburbInput.addEventListener("input", () => {
     // Convert to lowercase to make search more lenient
     const lowercaseSuburbs = allSuburbs.map(suburb => suburb.toLowerCase());
     // Filter out the suburbs
-    const filteredSuburbs = lowercaseSuburbs.filter(item => item.includes(searchSuburbInput.value.toLowerCase()));
+    const filteredSuburbs = lowercaseSuburbs.filter(
+        item => item.includes(searchSuburbInput.value.toLowerCase())
+    );
     // Loop back through JSON file, and if a suburb matches one of the filtered suburbs, add it
     const displaySuburbs = allSuburbs.filter(suburb => filteredSuburbs.includes(suburb.toLowerCase()));
 
@@ -120,7 +124,7 @@ searchSuburbInput.addEventListener("input", () => {
 // -----------------------------
 const popupEl = document.getElementById("add-session-popup");
 const popupBtn = document.getElementById("add-session-btn");
-const cancelPopupBtn = document.getElementById('cancel-add-session')
+const cancelPopupBtn = document.getElementById("cancel-add-session");
 
 // Function to show the add session popup
 function showSessionPopup() {
@@ -264,7 +268,7 @@ function checkTimesInvalid(sessionId, startTime, endTime, date, startTimeErrorEl
     let invalid = false;
 
     // Check that end time is after start time, and neither is null
-    if (!startTime || !endTime || startTime > endTime) {
+    if (startTime > endTime) {
         showError(startTimeErrorElementId, "Start time must be before end time");
         invalid = true;
     } else if (!startTime) {
@@ -346,7 +350,7 @@ function hideLoading() {
     document.getElementById("loading-screen").classList.add("hidden");
 }
 
-// Function to store a new session in localStorage 
+// Function to store a new session in localStorage
 function storeNewSession(sessionId, date, startTime, endTime, stateTerritory, startSuburb, endSuburb) {
     // Get data from storage
     const sessions = getAllStoredSessions();
@@ -410,7 +414,7 @@ function getAllStoredSessions() {
     const cipherText = window.localStorage.getItem(STORAGE_KEY);
 
     // If no sessions were stored, default to an empty array
-    if (cipherText === '[]' || !cipherText) {
+    if (cipherText === "[]" || !cipherText) {
         return [];
     }
 
@@ -465,7 +469,7 @@ function formatTime(timeString) {
     // Change from 24-hour to 12-hour format
 
     // Separate hour and minutes from timeString
-    const [hour, minute] = timeString.split(':');
+    const [hour, minute] = timeString.split(":");
 
     // Convert hour from string to integer
     intHour = parseInt(hour);
@@ -533,7 +537,7 @@ function minutesToHHMM(minutes) {
     minutes = minutes % 60 // Find the remainder
 
     // Return a string formatted in HH:MM
-    return String(`${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`);
+    return String(`${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`);
 }
 
 // Function to render the total hours logged on the page
@@ -587,7 +591,7 @@ function generateUniqueId() {
 // Function to display a popup with a message on the screen
 function showConfirmation(heading, description) {
     const confirmation = document.getElementById("confirmation")
-    confirmation.textContent = ''; // Clear any existing messages
+    confirmation.textContent = ""; // Clear any existing messages
 
     // Show the confirmation box
     const container = document.getElementById("confirmation-message")
@@ -625,14 +629,14 @@ searchForm.addEventListener("submit", (event) => {
 
     // Sanitise the user inputs before working with them (even if it is not rendered to the DOM)
     // Just in case if users find an exploit
-    const date = DOMPurify.sanitize(searchDateInput.value)
-    const suburb = DOMPurify.sanitize(searchSuburbInput.value)
+    const date = DOMPurify.sanitize(searchDateInput.value);
+    const suburb = DOMPurify.sanitize(searchSuburbInput.value);
 
     // If search inputs are empty, render the sessions as normal
     if (date === '' && suburb === '') {
         showError("search-error", "Invalid search query");
         setTimeout(() => {
-            document.getElementById("search-error").classList.add("hidden")
+            document.getElementById("search-error").classList.add("hidden");
         }, 2 * 1000);
         refreshUI();
         return;
