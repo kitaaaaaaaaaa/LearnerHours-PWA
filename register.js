@@ -34,10 +34,10 @@ registerForm.addEventListener("submit", async (event) => {
     clearErrors();
 
     // Get form field values 
-    const username = document.getElementById("username").value;
-    const password = document.getElementById("password").value;
-    const phone = document.getElementById("phone").value;
-    const reenteredPassword = document.getElementById("reenter-password").value;
+    const username = DOMPurify.sanitize(document.getElementById("username").value);
+    const password = DOMPurify.sanitize(document.getElementById("password").value);
+    const phone = DOMPurify.sanitize(document.getElementById("phone").value);
+    const reenteredPassword = DOMPurify.sanitize(document.getElementById("reenter-password").value);
 
     // Track if the form is valid 
     let isValid = true;
@@ -114,8 +114,8 @@ loginForm.addEventListener("submit", async (event) => {
     clearErrors(); // Clear any error messages
 
     // Get form field values
-    const username = document.getElementById("login-username").value;
-    const password = document.getElementById("login-password").value;
+    const username = DOMPurify.sanitize(document.getElementById("login-username").value);
+    const password = DOMPurify.sanitize(document.getElementById("login-password").value);
 
     // Track if the form is valid
     let isValid = true;

@@ -245,9 +245,10 @@ function checkDuplicateSession(currentSession, sessionId) {
 
 // Function to check if the date is invalid
 function checkDateInvalid(date, errorElementId) {
-    // Check that date is not null and is in the past
+    // Get the current date
     const today = new Date().toLocaleDateString("en-CA");
-
+    
+    // Check that date is not null and is in the past
     if (!date || date > today) {
         newSessionFormEl.reset();
         showError(errorElementId, "Date must be in the past");
@@ -655,9 +656,6 @@ searchForm.addEventListener("submit", (event) => {
 
     // Refresh the UI
     renderPastSessions(filteredSessions);
-
-    // Reset the search form
-    searchForm.reset();
 })
 
 // -----------------------------
