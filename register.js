@@ -4,11 +4,11 @@ const bcrypt = dcodeIO.bcrypt;
 
 // Initialise encryption library
 const SECRET_KEY = "b3dc7ab9b72ccf9c933dedf29d0ea11bcab54f635ed819ebc2c9ad986170a609";
-const simpleCrypto = new SimpleCrypto(SECRET_KEY)
+const simpleCrypto = new SimpleCrypto(SECRET_KEY);
 
 // Create constants for the form
 const registerForm = document.getElementById("registrationForm");
-const loginForm = document.getElementById("loginForm")
+const loginForm = document.getElementById("loginForm");
 
 // -----------------------------
 // Display correct UI based on if there is already an account
@@ -25,30 +25,30 @@ if (getCredentials().length !== 0) {
 // Listen to registration form submissions
 // -----------------------------
 registerForm.addEventListener("submit", async (event) => {
-    event.preventDefault(); // Prevent form submission 
+    event.preventDefault(); // Prevent form submission
 
     // Show a loading screen since the operation may take some time
     showLoading();
 
-    // Clear previous error messages 
+    // Clear previous error messages
     clearErrors();
 
-    // Get form field values 
-    const username = document.getElementById("username").value;
-    const password = document.getElementById("password").value;
-    const phone = document.getElementById("phone").value;
-    const reenteredPassword = document.getElementById("reenter-password").value;
+    // Get form field values
+    const username = DOMPurify.sanitize(document.getElementById("username").value);
+    const password = DOMPurify.sanitize(document.getElementById("password").value);
+    const phone = DOMPurify.sanitize(document.getElementById("phone").value);
+    const reenteredPassword = DOMPurify.sanitize(document.getElementById("reenter-password").value);
 
-    // Track if the form is valid 
+    // Track if the form is valid
     let isValid = true;
 
-    // Validate Username 
-    if (username === "") {  // If username is blank 
+    // Validate Username
+    if (username === "") {  // If username is blank
         showError("usernameError", "Username is required");
         isValid = false;
     }
 
-    // Validate Password (min 12 characters, at least one letter, one number and one special character) 
+    // Validate Password (min 12 characters, at least one letter, one number and one special character)
     const passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=])[A-Za-z\d!@#$%^&*()_+\-=]{12,}$/;
 
     if (!passwordPattern.test(password)) {
@@ -58,11 +58,11 @@ registerForm.addEventListener("submit", async (event) => {
 
     // Check if reentered password matches to verify data
     if (reenteredPassword !== password) {
-        showError("reenterPasswordError", "The reentered password does not match the password above")
+        showError("reenterPasswordError", "The reentered password does not match the password above");
         isValid = false;
     }
 
-    // Validate Phone Number (must be exactly 10 digits) 
+    // Validate Phone Number (must be exactly 10 digits)
     const phonePattern = /^\d{10}$/;
 
     if (!phonePattern.test(phone)) {
@@ -72,11 +72,11 @@ registerForm.addEventListener("submit", async (event) => {
 
     // Check if there is already an account on the device
     if (getCredentials().length !== 0) {
-        showError("formError", "There is already an account on this device")
+        showError("formError", "There is already an account on this device");
         isValid = false;
     }
 
-    // If the form is valid, submit it or show a success message 
+    // If the form is valid, submit it or show a success message
     if (isValid) {
         const credentials = getCredentials();
 
@@ -114,11 +114,23 @@ loginForm.addEventListener("submit", async (event) => {
     clearErrors(); // Clear any error messages
 
     // Get form field values
-    const username = document.getElementById("login-username").value;
-    const password = document.getElementById("login-password").value;
+    const username = DOMPurify.sanitize(document.getElementById("login-username").value);
+    const password = DOMPurify.sanitize(document.getElementById("login-password").value);
 
     // Track if the form is valid
     let isValid = true;
+
+    // Check if the username matches with the stored credentials
+    if (username !== getCredentials()[0].username) {
+        showError("login-usernameError", "Incorrect username");
+        isValid = false;
+    }
+
+    // Check if the password matches with the stored credentials
+    if (!await bcrypt.compare(password, getCredentials()[0].passwordHash)) {
+        showError("login-passwordError", "Incorrect password");
+        isValid = false;
+    }
 
     // Validate username
     if (username === "") {
@@ -128,23 +140,11 @@ loginForm.addEventListener("submit", async (event) => {
 
     // Validate password
     if (password === "") {
-        showError("login-passwordError", "Password is required")
+        showError("login-passwordError", "Password is required");
         isValid = false;
     }
 
-    // Check if the username matches with the stored credentials
-    if (username !== getCredentials()[0].username) {
-        showError("login-usernameError", "Incorrect username")
-        isValid = false;
-    }
-
-    // Check if the password matches with the stored credentials
-    if (!await bcrypt.compare(password, getCredentials()[0].passwordHash)) {
-        showError("login-passwordError", "Incorrect password")
-        isValid = false;
-    }
-
-    // If everything is valid and correct, 
+    // If everything is valid and correct
     if (isValid) {
         // Store session expiry into sessionStorage as an encrypted value to help prevent tampering.
         const plainData = generateExpiryTime();
@@ -152,7 +152,7 @@ loginForm.addEventListener("submit", async (event) => {
         window.sessionStorage.setItem("session-info", JSON.stringify(cipherData));
 
         // Redirect the user to the main page
-        window.location.replace("index.html")
+        window.location.replace("index.html");
     }
     hideLoading();
 });
@@ -209,13 +209,13 @@ function getCredentials() {
     return credentials;
 }
 
-// Function to clear all error messages 
+// Function to clear all error messages
 function clearErrors() {
     const errorElements = document.querySelectorAll(".error");
-    errorElements.forEach(element => element.textContent = "");
+    errorElements.forEach((element) => element.textContent = "");
 }
 
-// Function to show error message 
+// Function to show error message
 function showError(elementId, message) {
     document.getElementById(elementId).textContent = message;
 }

@@ -6,7 +6,6 @@ const CACHE_NAME = `learner-hours-${VERSION}`;
 
 // list of app resources
 const APP_STATIC_RESOURCES = [
-    "/",
     "/index.html",
     "/style.css",
     "/app.js",
