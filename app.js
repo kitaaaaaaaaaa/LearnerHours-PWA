@@ -476,7 +476,7 @@ function formatTime(timeString) {
 
     // Determine if AM or PM
     period = "AM";
-    if (intHour > 12) {
+    if (intHour >= 12) {
         intHour -= 12;
         period = "PM";
     }
