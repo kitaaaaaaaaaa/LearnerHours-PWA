@@ -280,10 +280,11 @@ function checkTimesInvalid(sessionId, startTime, endTime, date, startTimeErrorEl
 
     // Check if the start time and end time is in the past
     const currentTime = new Date().toLocaleTimeString("en-AU", { hour12: false, hour: "2-digit", minute: "2-digit" })
-    if (startTime > currentTime) {
+    const currentDate = new Date().toLocaleDateString("en-CA");
+    if (startTime > currentTime && date === currentDate) {
         showError(startTimeErrorElementId, "Start time must be in the past")
         invalid = true;
-    } else if (endTime > currentTime) {
+    } else if (endTime > currentTime && date === currentDate) {
         showError(endTimeErrorElementId, "End time must be in the past")
         invalid = true;
     }

@@ -120,18 +120,6 @@ loginForm.addEventListener("submit", async (event) => {
     // Track if the form is valid
     let isValid = true;
 
-    // Validate username
-    if (username === "") {
-        showError("login-usernameError", "Username is required");
-        isValid = false;
-    }
-
-    // Validate password
-    if (password === "") {
-        showError("login-passwordError", "Password is required")
-        isValid = false;
-    }
-
     // Check if the username matches with the stored credentials
     if (username !== getCredentials()[0].username) {
         showError("login-usernameError", "Incorrect username")
@@ -141,6 +129,18 @@ loginForm.addEventListener("submit", async (event) => {
     // Check if the password matches with the stored credentials
     if (!await bcrypt.compare(password, getCredentials()[0].passwordHash)) {
         showError("login-passwordError", "Incorrect password")
+        isValid = false;
+    }
+
+    // Validate username
+    if (username === "") {
+        showError("login-usernameError", "Username is required");
+        isValid = false;
+    }
+
+    // Validate password
+    if (password === "") {
+        showError("login-passwordError", "Password is required")
         isValid = false;
     }
 
