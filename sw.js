@@ -6,24 +6,25 @@ const CACHE_NAME = `learner-hours-${VERSION}`;
 
 // list of app resources
 const APP_STATIC_RESOURCES = [
-    "/index.html",
-    "/style.css",
-    "/app.js",
-    "/register.html",
-    "/register-style.css",
-    "/register.js",
-    "/LearnerHours.json",
-    "/icons/icon1.png",
-    "/icons/icon2.jpg", 
-    "/au-suburbs.json",
-    "/anim/loading.webm",
-    "/libs/bcrypt.min.js",
-    "/libs/purify.min.js",
-    "/libs/SimpleCrypto.min.js",
-    "/libs/all.min.css",
-    "/fonts/Figtree-VariableFont_wght.ttf",
-    "/webfonts/fa-regular-400.woff2",
-    "/webfonts/fa-solid-900.woff2"
+    "./",
+    "index.html",
+    "style.css",
+    "app.js",
+    "register.html",
+    "register-style.css",
+    "register.js",
+    "LearnerHours.json",
+    "icons/icon1.png",
+    "icons/icon2.jpg", 
+    "au-suburbs.json",
+    "anim/loading.webm",
+    "libs/bcrypt.min.js",
+    "libs/purify.min.js",
+    "libs/SimpleCrypto.min.js",
+    "libs/all.min.css",
+    "fonts/Figtree-VariableFont_wght.ttf",
+    "webfonts/fa-regular-400.woff2",
+    "webfonts/fa-solid-900.woff2"
 ]; 
 
 self.addEventListener("install", (event) => {
