@@ -159,7 +159,7 @@ newSessionFormEl.addEventListener("submit", (event) => {
     // since everything is client-side.
     event.preventDefault();
 
-    // Get the start and end dates from the form.
+    // Get the all the inputs from the form.
     // Sanitise user input as an additional security step to prevent malicious code from being stored
     const date = DOMPurify.sanitize(dateInputEl.value);
     const startTime = DOMPurify.sanitize(startTimeInputEl.value);
